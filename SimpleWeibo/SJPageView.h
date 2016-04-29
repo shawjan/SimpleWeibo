@@ -10,4 +10,8 @@
 
 @interface SJPageView : UIView
 
+@property(nonatomic, strong)NSDictionary *pageInfo;
+
++(CGFloat)getHeightOfSJPageView;
+
 @end

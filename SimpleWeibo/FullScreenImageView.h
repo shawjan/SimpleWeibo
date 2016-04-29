@@ -8,6 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
+
+NS_ENUM(NSInteger, FullScreenImageViewType){
+    FullScreenImageViewNoneType = 0,
+    FullScreenImageViewSelectableType = 1,
+};
+
+@protocol CheckStatusChangeObserver <NSObject>
+
+-(void)checkButtonStatusChangeObserver:(BOOL)selected withIndexPath:(NSIndexPath*)indexPath;
+
+@end
+
 @interface FullScreenImageView : UIView
+
+@property(nonatomic, assign) id <CheckStatusChangeObserver> delegate;
+
+-(instancetype)initWithFrame:(CGRect)frame withSelected:(BOOL)selected numberOfSelected:(NSInteger)selectedNum withIndexPath:(NSIndexPath*)indexPath withType:(enum FullScreenImageViewType)viewType;
+
+-(void)updateImage:(UIImage*)image;
 
 @end

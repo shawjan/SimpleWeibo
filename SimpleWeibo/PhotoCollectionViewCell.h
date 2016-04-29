@@ -8,6 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PhotoCollectionViewCell : UICollectionViewCell
+
+@protocol CollectionCellViewButtonClicked <NSObject>
+
+-(void)collectionCellViewButtonClicked:(id)sender;
 
 @end
+
+@interface PhotoCollectionViewCell : UICollectionViewCell
+
+@property(nonatomic, assign) id <CollectionCellViewButtonClicked> delegate;
+
+-(void)setImage:(UIImage*)image withIndex:(NSUInteger)cellIndex;
+-(void)updateCheckImage;
+@end
+

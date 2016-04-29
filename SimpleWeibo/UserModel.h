@@ -10,4 +10,12 @@
 
 @interface UserModel : NSObject
 
+@property(nonatomic,strong) NSString * screen_name;
+@property(nonatomic, strong)NSString * created_at;
+@property(nonatomic, strong) NSString * profile_image_url;
+@property(nonatomic, strong) NSString * source;
+@property(nonatomic, strong) NSString *gender;
+
+-(BOOL)reflectDataFromOtherObject:(NSObject*)dataSource;
+
 @end

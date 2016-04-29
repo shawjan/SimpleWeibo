@@ -10,4 +10,7 @@
 
 @interface SJImageUnitView : UIView
 
+@property(nonatomic, strong) UIImageView *imageView;
+@property(nonatomic, strong) UIButton *imageButton;
+
 @end

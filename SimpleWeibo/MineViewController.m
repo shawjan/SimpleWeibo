@@ -24,6 +24,14 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+- (IBAction)quitButtonClicked:(id)sender {
+    UIViewController *tabbarVC = [[self parentViewController] parentViewController];
+    if([tabbarVC isKindOfClass:[UITabBarController class]]){
+        [tabbarVC dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
 /*
 #pragma mark - Navigation
 

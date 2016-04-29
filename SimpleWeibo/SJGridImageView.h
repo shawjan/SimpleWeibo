@@ -10,4 +10,8 @@
 
 @interface SJGridImageView : UIView
 
+-(void)updateWithImages:(NSMutableArray*)images sourceImages:(NSMutableArray*)srcImages;
++(CGFloat)getGridImageViewHeightWithImages:(NSMutableArray*)images;
++(CGFloat)getGridImageViewHeightWithImageCount:(NSInteger)imageCount;
+
 @end

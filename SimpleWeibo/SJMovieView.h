@@ -10,4 +10,9 @@
 
 @interface SJMovieView : UIView
 
+@property(nonatomic, strong)NSURL *videoURL;
+@property(nonatomic, strong) NSDictionary *mediaInfo;
+
++(CGFloat)getMovieViewHeight;
+
 @end

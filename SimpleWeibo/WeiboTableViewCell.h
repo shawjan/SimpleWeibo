@@ -7,7 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "StatusModel.h"
 
 @interface WeiboTableViewCell : UITableViewCell
+
+-(void)setStatusViewData:(StatusModel *)status;
++(CGFloat)getCellHeightWithStatus:(StatusModel*)status;
+
+
+//-(void)setAvartarImageView:(NSURL*)imageURL;
+//
+//-(void)setScreenNameLabText:(NSString*)text;
+//
+//-(void)setCreatAtLabText:(NSString*)text;
+//
+//-(void)setSourceLabText:(NSString*)text;
 
 @end
