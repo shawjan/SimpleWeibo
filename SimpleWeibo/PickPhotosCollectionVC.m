@@ -8,14 +8,13 @@
 
 #import "PickPhotosCollectionVC.h"
 #import "PhotoCollectionViewCell.h"
-#import <Photos/Photos.h>
-#import <AVFoundation/AVCaptureDevice.h>
+#import "ComposePhotoGridView.h"
+
 #import "FullScreenImageView.h"
 
 @interface PickPhotosCollectionVC ()<CollectionCellViewButtonClicked, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CheckStatusChangeObserver>
 
-@property(nonatomic, strong)NSMutableArray *photos;
-@property(nonatomic, strong)PHFetchResult *assetsFetchResults;
+
 @property(nonatomic, strong)PHCachingImageManager *imageManager;
 @property (nonatomic, assign)CGRect previousPreheatRect;
 @end
@@ -46,6 +45,13 @@ static CGSize AssetGridThumbnailSize;
     
 }
 
+-(void)dealloc
+{
+    
+}
+
+
+
 -(void)awakeFromNib
 {
     if(self.collectionView.indexPathsForSelectedItems.count > 0){
@@ -57,9 +63,17 @@ static CGSize AssetGridThumbnailSize;
     }
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
 -(void)nextButtonClicked:(id)sender
 {
-    
+    if([self.delegate respondsToSelector:@selector(respondsToNextBtn:withSelections:)]){
+        [self.delegate respondsToNextBtn:self.assetsFetchResults withSelections:self.collectionView.indexPathsForSelectedItems];
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)backButtonClicked:(id)sender
@@ -67,8 +81,18 @@ static CGSize AssetGridThumbnailSize;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+-(void)updateSelections
+{
+    for (NSIndexPath *indexPath in self.selections) {
+        if(indexPath.row < self.assetsFetchResults.count){
+            [self updateCellCheckButton:NO withIndexPath:indexPath];
+        }
+    }
+}
+
 -(void)viewWillAppear:(BOOL)animated
 {
+    
     [super viewWillAppear:animated];
     [self getPhotoCollection];
     PHAuthorizationStatus authStatus = [PHPhotoLibrary authorizationStatus];
@@ -76,14 +100,9 @@ static CGSize AssetGridThumbnailSize;
         NSLog(@"error");
     }
     
-    CGFloat scale = ([UIScreen mainScreen].bounds.size.width - 4) / 3;
-    AssetGridThumbnailSize = CGSizeMake(scale, scale);
+    AssetGridThumbnailSize = CGSizeMake(GridWidth, GridWidth);
     ((UICollectionViewFlowLayout *)self.collectionViewLayout).itemSize = AssetGridThumbnailSize;
-}
-
--(void)dealloc
-{
-    
+    [self updateSelections];
 }
 
 -(void)getPhotoCollection
@@ -91,6 +110,7 @@ static CGSize AssetGridThumbnailSize;
     PHFetchOptions *options = [[PHFetchOptions alloc] init];
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
     self.assetsFetchResults = [PHAsset fetchAssetsWithOptions:options];
+    [self.collectionView reloadData];
 }
 
 -(void)updateCellCheckButton:(BOOL)selected withIndexPath:(NSIndexPath*)indexPath
@@ -144,9 +164,9 @@ static CGSize AssetGridThumbnailSize;
 }
 
 -(CGSize)targetSize{
-    CGFloat scale = [UIScreen mainScreen].scale;
+    CGFloat screenScale = [UIScreen mainScreen].scale;
     CGSize size = [UIScreen mainScreen].bounds.size;
-    CGSize targetSize = CGSizeMake(size.width * scale, size.height * scale);
+    CGSize targetSize = CGSizeMake(size.width * screenScale, size.height * screenScale);
     return targetSize;
 }
 
@@ -178,7 +198,9 @@ static CGSize AssetGridThumbnailSize;
     if(indexPath.item == 0){
         [cell setImage:[UIImage imageNamed:@"compose_photo_photograph"] withIndex:0];
     }else{
-        [self.imageManager requestImageForAsset:self.assetsFetchResults[indexPath.item - 1]
+        NSMutableArray *array = [NSMutableArray array];
+        [array addObject:self.assetsFetchResults[indexPath.item - 1]];
+        [self.imageManager requestImageForAsset:array[0]
                                      targetSize:AssetGridThumbnailSize
                                     contentMode:PHImageContentModeAspectFill
                                         options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {

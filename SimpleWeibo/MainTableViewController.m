@@ -150,9 +150,9 @@
         return status.height;
     }
     CGFloat height = [WeiboTableViewCell getCellHeightWithStatus:status];
-    height += 19;
+    height += 19;//文本计算label高度不准确
     status.height = height;
-    NSLog(@"%f", height);
+    //NSLog(@"%f", height);
     return height;
 }
 

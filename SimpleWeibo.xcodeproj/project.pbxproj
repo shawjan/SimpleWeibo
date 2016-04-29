@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2A0330EC1CD0FA6300E5A2EF /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0330EB1CD0FA6200E5A2EF /* WebViewController.m */; };
+		2A0496B11CD2EEC900DCE10B /* ComposePhotoGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0496B01CD2EEC900DCE10B /* ComposePhotoGridView.m */; };
 		2A0868D91CC6261400F6A639 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0868D81CC6261400F6A639 /* LoginViewController.m */; };
 		2A0868DC1CC628AB00F6A639 /* MainTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0868DB1CC628AB00F6A639 /* MainTableViewController.m */; };
 		2A0868DF1CC628D800F6A639 /* MineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0868DE1CC628D800F6A639 /* MineViewController.m */; };
@@ -55,7 +56,9 @@
 		1E6924C78DAC316F1832005D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		2A0330EA1CD0FA6200E5A2EF /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
 		2A0330EB1CD0FA6200E5A2EF /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
-		2A0330ED1CD1021D00E5A2EF /* SimpleWeibo.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleWeibo.pch; path = SimpleWeibo/SimpleWeibo.pch; sourceTree = "<group>"; };
+		2A0330ED1CD1021D00E5A2EF /* SimpleWeibo.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleWeibo.pch; sourceTree = "<group>"; };
+		2A0496AF1CD2EEC900DCE10B /* ComposePhotoGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposePhotoGridView.h; sourceTree = "<group>"; };
+		2A0496B01CD2EEC900DCE10B /* ComposePhotoGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComposePhotoGridView.m; sourceTree = "<group>"; };
 		2A0868D71CC6261400F6A639 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		2A0868D81CC6261400F6A639 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		2A0868DA1CC628AB00F6A639 /* MainTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTableViewController.h; sourceTree = "<group>"; };
@@ -146,6 +149,71 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		2A0496AB1CD2ED9400DCE10B /* TimelineView */ = {
+			isa = PBXGroup;
+			children = (
+				2A0868DA1CC628AB00F6A639 /* MainTableViewController.h */,
+				2A0868DB1CC628AB00F6A639 /* MainTableViewController.m */,
+				2A0F6F771CCA4CFE00D1D684 /* WeiboTableViewCell.h */,
+				2A0F6F781CCA4CFE00D1D684 /* WeiboTableViewCell.m */,
+				2A0F6F7A1CCA4FDF00D1D684 /* SJStatusView.h */,
+				2A0F6F7B1CCA4FDF00D1D684 /* SJStatusView.m */,
+				2A0F6F8C1CCBBB9900D1D684 /* SJGridImageView.h */,
+				2A0F6F8D1CCBBB9A00D1D684 /* SJGridImageView.m */,
+				2A0F6F8F1CCBBF1400D1D684 /* SJImageUnitView.h */,
+				2A0F6F901CCBBF1400D1D684 /* SJImageUnitView.m */,
+				2A0EE8131CCFBE13005A3009 /* SJMovieView.h */,
+				2A0EE8141CCFBE13005A3009 /* SJMovieView.m */,
+				2A0EE8161CCFBE64005A3009 /* SJPageView.h */,
+				2A0EE8171CCFBE64005A3009 /* SJPageView.m */,
+			);
+			name = TimelineView;
+			sourceTree = "<group>";
+		};
+		2A0496AC1CD2EDC900DCE10B /* ComposeView */ = {
+			isa = PBXGroup;
+			children = (
+				2A0C24681CC7B1BA00DE9EB5 /* ComposeViewController.h */,
+				2A0C24691CC7B1BA00DE9EB5 /* ComposeViewController.m */,
+				2A0BCB041CCE076D0079D8DE /* PhotoCollectionViewCell.h */,
+				2A0BCB051CCE076D0079D8DE /* PhotoCollectionViewCell.m */,
+				2A0BCB071CCE41380079D8DE /* PickPhotosCollectionVC.h */,
+				2A0BCB081CCE41380079D8DE /* PickPhotosCollectionVC.m */,
+				2A0EE8091CCF44B3005A3009 /* FullScreenImageView.h */,
+				2A0EE80A1CCF44B3005A3009 /* FullScreenImageView.m */,
+				2A0496AF1CD2EEC900DCE10B /* ComposePhotoGridView.h */,
+				2A0496B01CD2EEC900DCE10B /* ComposePhotoGridView.m */,
+			);
+			name = ComposeView;
+			sourceTree = "<group>";
+		};
+		2A0496AD1CD2EDE300DCE10B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2A0F6F831CCB256B00D1D684 /* UserModel.h */,
+				2A0F6F841CCB256B00D1D684 /* UserModel.m */,
+				2A0F6F891CCB2A1400D1D684 /* StatusModel.h */,
+				2A0F6F8A1CCB2A1400D1D684 /* StatusModel.m */,
+				2AFF5FF61CCC71FD00045891 /* PhotoModel.h */,
+				2AFF5FF71CCC71FD00045891 /* PhotoModel.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		2A0496AE1CD2EE1400DCE10B /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				2AB61B821CC521B800C5B012 /* AppDelegate.h */,
+				2AB61B831CC521B800C5B012 /* AppDelegate.m */,
+				2A0330ED1CD1021D00E5A2EF /* SimpleWeibo.pch */,
+				2A0C246B1CC7BB6F00DE9EB5 /* TabBarViewController.h */,
+				2A0C246C1CC7BB6F00DE9EB5 /* TabBarViewController.m */,
+				2A0330EA1CD0FA6200E5A2EF /* WebViewController.h */,
+				2A0330EB1CD0FA6200E5A2EF /* WebViewController.m */,
+			);
+			name = Share;
+			sourceTree = "<group>";
+		};
 		2A0EE80C1CCFA600005A3009 /* FPS */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,7 +243,6 @@
 		2AB61B731CC521B800C5B012 = {
 			isa = PBXGroup;
 			children = (
-				2A0330ED1CD1021D00E5A2EF /* SimpleWeibo.pch */,
 				2AB61B7E1CC521B800C5B012 /* SimpleWeibo */,
 				2AB61B7D1CC521B800C5B012 /* Products */,
 				07CE6D338124E4A91D95C32A /* Pods */,
@@ -194,46 +261,16 @@
 		2AB61B7E1CC521B800C5B012 /* SimpleWeibo */ = {
 			isa = PBXGroup;
 			children = (
+				2A0496AE1CD2EE1400DCE10B /* Share */,
 				2A0EE80C1CCFA600005A3009 /* FPS */,
 				2A0F6F661CCA11FF00D1D684 /* data */,
-				2AB61B821CC521B800C5B012 /* AppDelegate.h */,
-				2AB61B831CC521B800C5B012 /* AppDelegate.m */,
-				2A0F6F831CCB256B00D1D684 /* UserModel.h */,
-				2A0F6F841CCB256B00D1D684 /* UserModel.m */,
-				2A0F6F891CCB2A1400D1D684 /* StatusModel.h */,
-				2A0F6F8A1CCB2A1400D1D684 /* StatusModel.m */,
-				2AFF5FF61CCC71FD00045891 /* PhotoModel.h */,
-				2AFF5FF71CCC71FD00045891 /* PhotoModel.m */,
+				2A0496AC1CD2EDC900DCE10B /* ComposeView */,
+				2A0496AB1CD2ED9400DCE10B /* TimelineView */,
+				2A0496AD1CD2EDE300DCE10B /* Model */,
 				2A0868D71CC6261400F6A639 /* LoginViewController.h */,
 				2A0868D81CC6261400F6A639 /* LoginViewController.m */,
-				2A0868DA1CC628AB00F6A639 /* MainTableViewController.h */,
-				2A0868DB1CC628AB00F6A639 /* MainTableViewController.m */,
 				2A0868DD1CC628D800F6A639 /* MineViewController.h */,
 				2A0868DE1CC628D800F6A639 /* MineViewController.m */,
-				2A0C24681CC7B1BA00DE9EB5 /* ComposeViewController.h */,
-				2A0C24691CC7B1BA00DE9EB5 /* ComposeViewController.m */,
-				2A0C246B1CC7BB6F00DE9EB5 /* TabBarViewController.h */,
-				2A0C246C1CC7BB6F00DE9EB5 /* TabBarViewController.m */,
-				2A0F6F771CCA4CFE00D1D684 /* WeiboTableViewCell.h */,
-				2A0F6F781CCA4CFE00D1D684 /* WeiboTableViewCell.m */,
-				2A0F6F7A1CCA4FDF00D1D684 /* SJStatusView.h */,
-				2A0F6F7B1CCA4FDF00D1D684 /* SJStatusView.m */,
-				2A0F6F8C1CCBBB9900D1D684 /* SJGridImageView.h */,
-				2A0F6F8D1CCBBB9A00D1D684 /* SJGridImageView.m */,
-				2A0F6F8F1CCBBF1400D1D684 /* SJImageUnitView.h */,
-				2A0F6F901CCBBF1400D1D684 /* SJImageUnitView.m */,
-				2A0BCB041CCE076D0079D8DE /* PhotoCollectionViewCell.h */,
-				2A0BCB051CCE076D0079D8DE /* PhotoCollectionViewCell.m */,
-				2A0BCB071CCE41380079D8DE /* PickPhotosCollectionVC.h */,
-				2A0BCB081CCE41380079D8DE /* PickPhotosCollectionVC.m */,
-				2A0EE8091CCF44B3005A3009 /* FullScreenImageView.h */,
-				2A0EE80A1CCF44B3005A3009 /* FullScreenImageView.m */,
-				2A0EE8131CCFBE13005A3009 /* SJMovieView.h */,
-				2A0EE8141CCFBE13005A3009 /* SJMovieView.m */,
-				2A0EE8161CCFBE64005A3009 /* SJPageView.h */,
-				2A0EE8171CCFBE64005A3009 /* SJPageView.m */,
-				2A0330EA1CD0FA6200E5A2EF /* WebViewController.h */,
-				2A0330EB1CD0FA6200E5A2EF /* WebViewController.m */,
 				2AFF5FF91CCCB9B400045891 /* test.jpg */,
 				2AB61B881CC521B800C5B012 /* Main.storyboard */,
 				2A0F6F801CCAC32C00D1D684 /* WeiboInfoModel.xcdatamodeld */,
@@ -398,6 +435,7 @@
 			files = (
 				2A0BCB091CCE41380079D8DE /* PickPhotosCollectionVC.m in Sources */,
 				2A0EE80B1CCF44B3005A3009 /* FullScreenImageView.m in Sources */,
+				2A0496B11CD2EEC900DCE10B /* ComposePhotoGridView.m in Sources */,
 				2A0F6F791CCA4CFE00D1D684 /* WeiboTableViewCell.m in Sources */,
 				2A0BCB061CCE076D0079D8DE /* PhotoCollectionViewCell.m in Sources */,
 				2A0EE8121CCFA600005A3009 /* YYWeakProxy.m in Sources */,

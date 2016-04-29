@@ -26,6 +26,9 @@
 
 #define ScreenWidth [[UIScreen mainScreen] bounds].size.width
 
+#define GridWidth  ((ScreenWidth - 4) / 3)
+//#define AssetGridThumbnailSize  CGSizeMake(scale, scale);
+
 #define StatusContentLabelPadding 10
 #define WhichType @"WhichType"
 #endif /* SimpleWeibo_pch */
