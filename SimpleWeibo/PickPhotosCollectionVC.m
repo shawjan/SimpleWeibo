@@ -12,11 +12,12 @@
 
 #import "FullScreenImageView.h"
 
-@interface PickPhotosCollectionVC ()<CollectionCellViewButtonClicked, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CheckStatusChangeObserver>
+@interface PickPhotosCollectionVC ()<CollectionCellViewButtonClicked, UINavigationControllerDelegate, UIImagePickerControllerDelegate, CheckStatusChangeObserver, PHPhotoLibraryChangeObserver>
 
 
 @property(nonatomic, strong)PHCachingImageManager *imageManager;
 @property (nonatomic, assign)CGRect previousPreheatRect;
+@property(nonatomic, assign) BOOL isFromPickerView;
 @end
 
 NSString * const photoCVCIdentifier = @"PhotoCVCIdentifier";
@@ -24,12 +25,21 @@ static CGSize AssetGridThumbnailSize;
 
 @implementation PickPhotosCollectionVC
 
+
 -(PHCachingImageManager *)imageManager
 {
     if(!_imageManager){
         _imageManager = [[PHCachingImageManager alloc] init];
     }
     return _imageManager;
+}
+
+-(NSMutableArray *)selections
+{
+    if(!_selections){
+        _selections = [[NSMutableArray alloc] init];
+    }
+    return _selections;
 }
 
 -(void)viewDidLoad
@@ -47,7 +57,7 @@ static CGSize AssetGridThumbnailSize;
 
 -(void)dealloc
 {
-    
+    [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
 }
 
 
@@ -61,6 +71,19 @@ static CGSize AssetGridThumbnailSize;
         self.navigationItem.rightBarButtonItem.title = @"下一步";
         self.navigationItem.rightBarButtonItem.enabled = NO;
     }
+    [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
+    [self getPhotoCollection];
+    PHAuthorizationStatus authStatus = [PHPhotoLibrary authorizationStatus];
+    if(authStatus == PHAuthorizationStatusRestricted || authStatus == PHAuthorizationStatusDenied){
+        NSLog(@"error");
+    }
+    
+    AssetGridThumbnailSize = CGSizeMake(GridWidth, GridWidth);
+    ((UICollectionViewFlowLayout *)self.collectionViewLayout).itemSize = AssetGridThumbnailSize;
+    if(self.isFromPickerView){
+        
+        self.isFromPickerView = NO;
+    }
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -70,8 +93,12 @@ static CGSize AssetGridThumbnailSize;
 
 -(void)nextButtonClicked:(id)sender
 {
-    if([self.delegate respondsToSelector:@selector(respondsToNextBtn:withSelections:)]){
-        [self.delegate respondsToNextBtn:self.assetsFetchResults withSelections:self.collectionView.indexPathsForSelectedItems];
+    if([self.delegate respondsToSelector:@selector(respondsToNextBtn:)]){
+        NSMutableArray *array = [NSMutableArray array];
+        for(NSIndexPath *indexPath in self.collectionView.indexPathsForSelectedItems){
+            [array addObject:self.assetsFetchResults[indexPath.item]];
+        }
+        [self.delegate respondsToNextBtn:array];
     }
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -83,8 +110,10 @@ static CGSize AssetGridThumbnailSize;
 
 -(void)updateSelections
 {
-    for (NSIndexPath *indexPath in self.selections) {
-        if(indexPath.row < self.assetsFetchResults.count){
+    for (int i = 0; i < self.selections.count; ++i) {
+        if([self.assetsFetchResults containsObject:self.selections[i]]){
+            NSUInteger index = [self.assetsFetchResults indexOfObject:self.selections[i]];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index inSection:0];
             [self updateCellCheckButton:NO withIndexPath:indexPath];
         }
     }
@@ -92,16 +121,7 @@ static CGSize AssetGridThumbnailSize;
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    
     [super viewWillAppear:animated];
-    [self getPhotoCollection];
-    PHAuthorizationStatus authStatus = [PHPhotoLibrary authorizationStatus];
-    if(authStatus == PHAuthorizationStatusRestricted || authStatus == PHAuthorizationStatusDenied){
-        NSLog(@"error");
-    }
-    
-    AssetGridThumbnailSize = CGSizeMake(GridWidth, GridWidth);
-    ((UICollectionViewFlowLayout *)self.collectionViewLayout).itemSize = AssetGridThumbnailSize;
     [self updateSelections];
 }
 
@@ -120,6 +140,11 @@ static CGSize AssetGridThumbnailSize;
         if(self.collectionView.indexPathsForSelectedItems.count < 9){
             [self.collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
             [cell updateCheckImage];
+        }else{
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"只能够选择9张图" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+            [alert addAction:alertAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
         if(self.collectionView.indexPathsForSelectedItems.count > 0){
             self.navigationItem.rightBarButtonItem.title = [NSString stringWithFormat:@"下一步(%ld)", self.collectionView.indexPathsForSelectedItems.count];
@@ -144,11 +169,10 @@ static CGSize AssetGridThumbnailSize;
     }
 }
 
--(void)collectionCellViewButtonClicked:(id)sender
+-(void)collectionCellViewButtonClicked:(PhotoCollectionViewCell*)cell
 {
-    if([sender isKindOfClass:[UIButton class]]){
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:((UIButton*)sender).tag inSection:0];
-        PhotoCollectionViewCell *cell = (PhotoCollectionViewCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
+    if([cell isKindOfClass:[PhotoCollectionViewCell class]]){
+        NSIndexPath *indexPath = [self.collectionView indexPathForCell:cell];
         [self updateCellCheckButton:cell.selected withIndexPath:indexPath];
     }
 }
@@ -173,13 +197,86 @@ static CGSize AssetGridThumbnailSize;
 #pragma mark UIImagePickerControllerDelegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
 {
-    
     [picker dismissViewControllerAnimated:YES completion:nil];
+    UIImage *originalImage, *editedImage, *imageToSave;
+    
+    editedImage = (UIImage *)[info objectForKey:UIImagePickerControllerEditedImage];
+    originalImage = (UIImage*)[info objectForKey:UIImagePickerControllerOriginalImage];
+    if(editedImage){
+        imageToSave = editedImage;
+    }else{
+        imageToSave = originalImage;
+    }
+    
+    //UIImageWriteToSavedPhotosAlbum(imageToSave, nil, nil, nil);
+    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        [PHAssetChangeRequest creationRequestForAssetFromImage:imageToSave];
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+        if(!success){
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"相片保存失败" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+            [alert addAction:alertAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
+    }];
+    
+    //[self dismissViewControllerAnimated:YES completion:nil];
+
 }
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+-(void)photoLibraryDidChange:(PHChange *)changeInstance
+{
+    PHFetchResultChangeDetails *collectionChanges = [changeInstance changeDetailsForFetchResult:self.assetsFetchResults];
+    
+    if(collectionChanges == nil)
+        return;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.assetsFetchResults = [collectionChanges fetchResultAfterChanges];
+        UICollectionView *collectionView = self.collectionView;
+        if(![collectionChanges hasIncrementalChanges] || [collectionChanges hasMoves]){
+            [collectionView reloadData];
+        }else{
+            [collectionView performBatchUpdates:^{
+                NSIndexSet * removedIndexes = [collectionChanges removedIndexes];
+                if([removedIndexes count] > 0){
+                    [collectionView deleteItemsAtIndexPaths:[self arrayFromIndexSet:removedIndexes]];
+                }
+                NSIndexSet *insertedIndexes = [collectionChanges insertedIndexes];
+                if([insertedIndexes count] > 0){
+                    NSMutableArray *array = [NSMutableArray array];
+                    [insertedIndexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                        [array addObject:[NSIndexPath indexPathForItem:idx+1 inSection:0]];
+                    }];
+                    [collectionView insertItemsAtIndexPaths:array];
+                    self.isFromPickerView = YES;
+                }
+                NSIndexSet *changedIndexes = [collectionChanges changedIndexes];
+                if([changedIndexes count] > 0){
+                    [collectionView reloadItemsAtIndexPaths:[self arrayFromIndexSet:changedIndexes]];
+                }
+            } completion:^(BOOL finished){
+                if(finished){
+                    [self updateCellCheckButton:NO withIndexPath:[NSIndexPath indexPathForItem:1 inSection:0]];
+                    //[self nextButtonClicked:nil];
+                }
+            }];
+        }
+    });
+}
+
+-(NSArray*)arrayFromIndexSet:(NSIndexSet*)indexSet
+{
+    NSMutableArray *array = [NSMutableArray array];
+    [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+        [array addObject:[NSIndexPath indexPathForItem:idx inSection:0]];
+    }];
+    return array;
 }
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -198,9 +295,7 @@ static CGSize AssetGridThumbnailSize;
     if(indexPath.item == 0){
         [cell setImage:[UIImage imageNamed:@"compose_photo_photograph"] withIndex:0];
     }else{
-        NSMutableArray *array = [NSMutableArray array];
-        [array addObject:self.assetsFetchResults[indexPath.item - 1]];
-        [self.imageManager requestImageForAsset:array[0]
+        [self.imageManager requestImageForAsset:self.assetsFetchResults[indexPath.item - 1]
                                      targetSize:AssetGridThumbnailSize
                                     contentMode:PHImageContentModeAspectFill
                                         options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
@@ -231,18 +326,23 @@ static CGSize AssetGridThumbnailSize;
                                         }];
         NSLog(@"%@", NSStringFromCGSize([self targetSize]));
         //NSLog(@"%ld", self.collectionView.indexPathsForSelectedItems.count);
-    }else{
+    }else if(collectionView.indexPathsForSelectedItems.count < 9){
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
         picker.allowsEditing = NO;
         [self presentViewController:picker animated:YES completion:nil];
+    }else{
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"只能够选择9张图" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+        [alert addAction:alertAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
 -(void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.item != 0){
+    if(indexPath.item != 0 ){
         [self.collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
         PhotoCollectionViewCell *cell = (PhotoCollectionViewCell*)[collectionView cellForItemAtIndexPath:indexPath];
     
@@ -260,6 +360,7 @@ static CGSize AssetGridThumbnailSize;
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
         picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        picker.modalPresentationStyle = UIModalPresentationCurrentContext;
         picker.allowsEditing = NO;
         [self presentViewController:picker animated:YES completion:nil];
     }

@@ -12,19 +12,26 @@
 #import "PickPhotosCollectionVC.h"
 #import <Masonry/Masonry.h>
 
-@interface ComposeViewController ()<PickPhotosCVCDelegate, UICollectionViewDataSource, UICollectionViewDelegate, ComposePhotoCellDelegate>
+@interface ComposeViewController ()<PickPhotosCVCDelegate, UICollectionViewDataSource, UICollectionViewDelegate, ComposePhotoCellDelegate, UITextViewDelegate>
 @property (strong, nonatomic) IBOutlet ComposePhotoGridView *imageGridView;
 @property (strong, nonatomic) IBOutlet UILabel *warningLabel;
 @property (strong, nonatomic) IBOutlet UITextView *composeTextView;
 @property (strong, nonatomic) IBOutlet UIView *toolBarView;
 
 @property(nonatomic, strong)PHFetchResult *fetchResults;
-@property(nonatomic, strong)NSArray *selections;
+@property(nonatomic, strong)NSMutableArray *selections;
 @property(nonatomic, strong) PHCachingImageManager *cachingImageManager;
 @end
 
 static CGSize ComposePhotoGridViewCellSize;
 @implementation ComposeViewController
+
+-(NSMutableArray *)selections{
+    if(!_selections){
+        _selections = [[NSMutableArray alloc] init];
+    }
+    return _selections;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -33,7 +40,7 @@ static CGSize ComposePhotoGridViewCellSize;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardFrameChanged:) name:UIKeyboardDidChangeFrameNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewChanged:) name:UITextViewTextDidBeginEditingNotification object:nil];
-    [self.composeTextView addObserver:self forKeyPath:@"text" options:NSKeyValueObservingOptionNew context:nil];
+    self.composeTextView.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -46,7 +53,6 @@ static CGSize ComposePhotoGridViewCellSize;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextViewTextDidBeginEditingNotification object:nil];
-    [self.composeTextView removeObserver:self forKeyPath:@"text" context:nil];
 //    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidChangeFrameNotification object:nil];
 }
 
@@ -69,8 +75,15 @@ static CGSize ComposePhotoGridViewCellSize;
     CGRect frame = self.toolBarView.frame;
     frame.origin.y = self.view.frame.size.height - (keyboardSize.height + frame.size.height);
     self.toolBarView.frame = frame;
-//    [UIView animateWithDuration:((NSNumber*)[info objectForKey:UIKeyboardAnimationCurveUserInfoKey]).doubleValue animations:^{
-//        
+//    NSArray *layoutArray = [self.toolBarView constraints];
+//    for (NSLayoutConstraint *layout in layoutArray) {
+//        if([layout.identifier isEqualToString:@"ToolBarViewToBottom"]){
+//            [NSLayoutConstraint deactivateConstraints:@[layout]];
+//            break;
+//        }
+//    }
+//    [self.toolBarView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.bottom.mas_equalTo(self.view.mas_bottom).offset(keyboardSize.height + frame.size.height);
 //    }];
 }
 
@@ -83,17 +96,35 @@ static CGSize ComposePhotoGridViewCellSize;
 //    [UIView animateWithDuration:((NSNumber*)[info objectForKey:UIKeyboardAnimationCurveUserInfoKey]).doubleValue animations:^{
 //        self.toolBarView.frame = frame;
 //    }];
+//    NSArray *layoutArray = [self.toolBarView constraints];
+//    for (NSLayoutConstraint *layout in layoutArray) {
+//        if([layout.identifier isEqualToString:@"ToolBarViewToBottom"]){
+//            [NSLayoutConstraint activateConstraints:@[layout]];
+//            break;
+//        }
+//    }
+//    [self.toolBarView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.bottom.mas_equalTo(self.view.mas_bottom).offset(50);
+//    }];
 }
 
-
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+-(void)textViewDidChange:(UITextView *)textView
 {
-    if([object isKindOfClass:[UITextView class]] && [keyPath isEqualToString:@"text"]){
-        NSString *text = self.composeTextView.text;
-        CGRect frame = [text boundingRectWithSize:CGSizeMake(self.composeTextView.frame.size.width, 1000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17.0]} context:nil];
-        
+    NSString *text = textView.text;
+    CGRect frame = [text boundingRectWithSize:CGSizeMake(self.composeTextView.frame.size.width, 1000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:17.0]} context:nil];
+    if(frame.size.height + 70 > self.toolBarView.frame.origin.y){
+        CGFloat offset = (frame.size.height + 70 - self.toolBarView.frame.origin.y);
+        [self.composeTextView setContentOffset:CGPointMake(0, offset) animated:YES];
     }
+    if([text length] > 140){
+        self.warningLabel.hidden = NO;
+        self.warningLabel.text = [NSString stringWithFormat:@"-%ld", [text length] - 140];
+    }else{
+        self.warningLabel.hidden = YES;
+    }
+    [self.view bringSubviewToFront:self.toolBarView];
 }
+
 
 -(PHCachingImageManager *)cachingImageManager
 {
@@ -104,17 +135,36 @@ static CGSize ComposePhotoGridViewCellSize;
 }
 
 
--(void)setSelections:(NSArray *)selections
+-(void)composePhotoCellButtonClicked:(ComposePhotoGridViewCell *)cell
 {
+    NSIndexPath *indexPath = [self.imageGridView indexPathForCell:cell];
+    [self.selections removeObjectAtIndex:indexPath.item];
+    if(self.selections.count <2){
+        [self.imageGridView reloadData];
+    }else{
+        [self.imageGridView deleteItemsAtIndexPaths:@[indexPath]];
+    }
+    [self adjustGridView:self.selections.count];
+}
+
+-(void)respondsToNextBtn:(NSArray *)selections
+{
+    [self.selections addObjectsFromArray:selections];
+    
     CGFloat gridWidth = (ScreenWidth - 22) / 3;
     ComposePhotoGridViewCellSize = CGSizeMake(gridWidth, gridWidth);
     ((UICollectionViewFlowLayout*)self.imageGridView.collectionViewLayout).itemSize = ComposePhotoGridViewCellSize;
     
-    _selections = selections;
-    NSInteger count = _selections.count;
+    [self adjustGridView:self.selections.count];
+    
+
+}
+
+-(void)adjustGridView:(NSInteger)count
+{
     if(count != 0 && count != 9){
         count += 1;
-    }else if(_selections.count > 9 || _selections.count == 0){
+    }else if(self.selections.count > 9 || self.selections.count == 0){
         count = 0;
     }
     if(count == 0){
@@ -124,32 +174,15 @@ static CGSize ComposePhotoGridViewCellSize;
         [self.imageGridView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(((count + 2) / 3) * ComposePhotoGridViewCellSize.height + 4);
         }];
-//        CGRect frame = self.imageGridView.frame;
-//        frame.size.height = ((count + 2) / 3) * ComposePhotoGridViewCellSize.height;
-//        self.imageGridView.frame = frame;
         [self.imageGridView reloadData];
     }
-}
-
--(void)composePhotoCellButtonClicked:(ComposePhotoGridViewCell *)cell
-{
-    NSIndexPath *indexPath = [self.imageGridView indexPathForCell:cell];
-    NSMutableArray *array = [NSMutableArray arrayWithArray:self.selections];
-    [array removeObjectAtIndex:indexPath.item];
-    self.selections = [array copy];
-}
-
--(void)respondsToNextBtn:(PHFetchResult *)fetchResult withSelections:(NSArray *)selections
-{
-    self.fetchResults = fetchResult;
-    self.selections = selections;
 }
 
 -(void)showComposeVC
 {
     UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     PickPhotosCollectionVC *picPhotosCVC = [sb instantiateViewControllerWithIdentifier:@"Pick Photos CVC"];
-    picPhotosCVC.selections = self.selections;
+    [picPhotosCVC.selections addObjectsFromArray: self.selections];
     picPhotosCVC.delegate = self;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:picPhotosCVC];
     [self presentViewController:nav animated:YES completion:nil];
@@ -178,8 +211,7 @@ static CGSize ComposePhotoGridViewCellSize;
 {
     ComposePhotoGridViewCell *cell = [self.imageGridView dequeueReusableCellWithReuseIdentifier:@"ComposeGridCellIdentifier" forIndexPath:indexPath];
     if(indexPath.item < self.selections.count){
-        NSIndexPath *index = self.selections[indexPath.item];
-        [self.cachingImageManager requestImageForAsset:self.fetchResults[index.item]
+        [self.cachingImageManager requestImageForAsset:self.selections[indexPath.item]
                                             targetSize:ComposePhotoGridViewCellSize
                                            contentMode:PHImageContentModeAspectFill
                                                options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
@@ -229,6 +261,9 @@ static CGSize ComposePhotoGridViewCellSize;
             if([nav.viewControllers[0] isKindOfClass:[PickPhotosCollectionVC class]]){
                 PickPhotosCollectionVC *pickPhotoCVC = nav.viewControllers[0];
                 pickPhotoCVC.delegate = self;
+                if(self.selections.count > 0){
+                    [pickPhotoCVC.selections addObject:self.selections];
+                }
             }
         }
         

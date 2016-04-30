@@ -86,7 +86,7 @@
 
 -(void)respondToButtonClicked:(id)sender{
     if([self.delegate respondsToSelector:@selector(collectionCellViewButtonClicked:)]){
-        [self.delegate collectionCellViewButtonClicked:sender];
+        [self.delegate collectionCellViewButtonClicked:self];
     }
 }
 

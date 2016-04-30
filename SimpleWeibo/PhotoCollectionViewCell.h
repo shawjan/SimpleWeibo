@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@class PhotoCollectionViewCell;
 
 @protocol CollectionCellViewButtonClicked <NSObject>
 
--(void)collectionCellViewButtonClicked:(id)sender;
+-(void)collectionCellViewButtonClicked:(PhotoCollectionViewCell*)cell;
 
 @end
 

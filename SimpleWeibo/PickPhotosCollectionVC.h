@@ -11,13 +11,13 @@
 #import <AVFoundation/AVCaptureDevice.h>
 @protocol PickPhotosCVCDelegate <NSObject>
 
--(void)respondsToNextBtn:(PHFetchResult*)fetchResult withSelections:(NSArray*)selections;
+-(void)respondsToNextBtn:(NSMutableArray*)selections;
 
 @end
 
 
 @interface PickPhotosCollectionVC : UICollectionViewController
-@property(nonatomic, strong)NSArray *selections;
+@property(nonatomic, strong)NSMutableArray *selections;
 @property(nonatomic, strong)PHFetchResult *assetsFetchResults;
 @property(nonatomic, assign) id<PickPhotosCVCDelegate> delegate;
 @end
