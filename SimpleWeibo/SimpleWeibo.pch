@@ -9,8 +9,15 @@
 #ifndef SimpleWeibo_pch
 #define SimpleWeibo_pch
 
+#import "AppDelegate.h"
 // Include any system framework and library headers here that should be included in all compilation units.
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#define APP_KEY @"4010441706"
+#define APP_SECRET @"60bfeca1ab0b06da91674a0c3e329e22"
+#define AUTHORIZATION_ADDRESS @"http://api.t.sina.com.cn/update.xml"
+#define App_REDIRECT_URL @"https://api.weibo.com/oauth2/default.html"
+#define Weibo_PublicLink @"https://api.weibo.com/2/"
 
 #define RepostButtonClicked @"RepostButtonClicked"
 #define LikeButtonClicked @"LikeButtonClicked"
@@ -31,4 +38,11 @@
 
 #define StatusContentLabelPadding 10
 #define WhichType @"WhichType"
+
+#define Weibo_AccessTokenKey @"AccessTokenKey"
+#define Weibo_ExpirationDate @"ExpirationDate"
+#define Weibo_UserId @"UserID"
+#define Weibo_RefreshToken @"RefreshToken"
+#define Weibo_AuthData @"WeiboAuthData"
+#define Weibo_UserLoginHistory @"userLoginHistory"
 #endif /* SimpleWeibo_pch */

@@ -149,7 +149,7 @@
         NSDateFormatter * newFormatter = [[NSDateFormatter alloc] init];
         [newFormatter setDateStyle:NSDateFormatterMediumStyle];
         [newFormatter setTimeStyle:NSDateFormatterShortStyle];
-        [newFormatter setDateFormat:@"YY-MM-dd HH:mm"];
+        [newFormatter setDateFormat:@"YY-MM-dd"];
         localDateString = [newFormatter stringFromDate:date];
     }
     
@@ -163,6 +163,7 @@
     }
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<a href=.*?>(.*?)</a>" options:NSRegularExpressionCaseInsensitive error:nil];
     NSString *resultStr = [regex stringByReplacingMatchesInString:string options:0 range:NSMakeRange(0, string.length) withTemplate:@"$1"];
+    resultStr = [NSString stringWithFormat:@"来自 %@", resultStr];
     return resultStr;
 }
 

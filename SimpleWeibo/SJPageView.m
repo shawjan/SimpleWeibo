@@ -87,7 +87,7 @@
 -(void)setPageInfo:(NSDictionary *)pageInfo
 {
     _pageInfo = pageInfo;
-    if([self.pageInfo objectForKey:@"page_pic"]){
+    if([self.pageInfo objectForKey:@"page_pic"] != nil && ![[self.pageInfo objectForKey:@"page_pic"] isKindOfClass:[NSNull class]]){
         self.leftImageView.hidden = NO;
         [self.leftImageView sd_setImageWithURL:[NSURL URLWithString:[self.pageInfo objectForKey:@"page_pic"]]];
     }else{
@@ -112,7 +112,7 @@
     }else if([pageInfo objectForKey:@"content3"]){
         str = [pageInfo objectForKey: @"page_desc"];
     }
-    if(str.length){
+    if(str){
         self.contentLbl.hidden = NO;
         self.contentLbl.text = str;
     }

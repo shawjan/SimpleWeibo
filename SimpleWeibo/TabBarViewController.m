@@ -8,6 +8,8 @@
 
 #import "TabBarViewController.h"
 #import "ComposeViewController.h"
+#import "AppDelegate.h"
+#import "LoginViewController.h"
 
 @interface TabBarViewController ()
 @property(nonatomic, strong) UIButton *composeBtn;
@@ -35,12 +37,29 @@
     [item setSelectedImage:[UIImage imageNamed:@"tabbar_home_highlighted"]];
     item = self.tabBar.items[2];
     [item setSelectedImage:[UIImage imageNamed:@"tabbar_profile_highlighted"]];
+    
+}
+
+-(void)awakeFromNib
+{
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     //[self.composeBtn addTarget:self action:@selector(composeBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+    
+}
+
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    if(!(appDelegate.wbCurrentUserId && appDelegate.wbRefreshToken && appDelegate.wbToken && appDelegate.expirationDate)){
+        [self performSegueWithIdentifier:@"Show LoginView" sender:self];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

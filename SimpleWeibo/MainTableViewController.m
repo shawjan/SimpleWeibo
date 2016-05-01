@@ -12,6 +12,8 @@
 #import "StatusModel.h"
 #import "UserModel.h"
 #import "WebViewController.h"
+#import "AppDelegate.h"
+#import <WeiboSDK/WeiboSDK.h>
 
 
 @interface MainTableViewController ()
@@ -51,7 +53,38 @@
     [self.navigationController.view bringSubviewToFront:self.fpsLabel];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(respondToCellButtonClicked:) name:@"RespondToCellButton" object:nil];
-    
+    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    if(appDelegate.screen_name){
+        self.navigationItem.title = appDelegate.screen_name;
+    }
+    //获取微博数据的借口，但是由于接口数据调整，拿不到一些图片、视频具体的链接，因此还是换成本地数据。
+//    AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+//    NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"statuses/public_timeline.json"];
+//    [WBHttpRequest requestWithURL:urlStr
+//                       httpMethod:@"GET"
+//                           params:@{@"access_token":appDelegate.wbToken,
+//                                    @"count":@"50",
+//                                    @"page":@"1"}
+//                            queue:[NSOperationQueue mainQueue]
+//            withCompletionHandler:^(WBHttpRequest *httpRequest, id result, NSError *error) {
+//                if(!error){
+//                    if([result isKindOfClass:[NSDictionary class]] && [result objectForKey:@"statuses"] != nil){
+//                        NSArray *statuses = (NSArray*)[result objectForKey:@"statuses"];
+//                        for(NSDictionary *dic in statuses){
+//                            StatusModel *status = [[StatusModel alloc] init];
+//                            [status reflectDataFromOtherObject:dic];
+//                            [self.statusesInfo addObject:status];
+//                        }
+//                    }
+//                    NSLog(@"%@", self.statusesInfo);
+//                    [self.tableView reloadData];
+//                }else{
+//                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[NSString stringWithFormat:@"%ld:%@ - %@", error.code, error.domain, error.userInfo] preferredStyle:UIAlertControllerStyleAlert];
+//                    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+//                    [alert addAction:alertAction];
+//                    [self presentViewController:alert animated:YES completion:nil];
+//                }
+//            }];
 }
 
 -(void)dealloc
@@ -94,6 +127,7 @@
 -(NSMutableDictionary *)weiboInfo
 {
     if(!_weiboInfo){
+        //test data
         for(int i = 7; i < 8; ++i){
             NSString *string = [NSString stringWithFormat:@"weibo_%d", i];
             NSError*error;
@@ -108,7 +142,6 @@
                 [_weiboInfo setValue:mutalArray forKey:Weibo_Status];
             }
         }
-        
 //        NSString *jsonStr = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
 //        NSLog(@"%@", jsonStr);
     }
@@ -119,6 +152,7 @@
 {
     if(!_statusesInfo){
         _statusesInfo = [[NSMutableArray alloc] init];
+        //test data
         for(NSDictionary *dic in [self.weiboInfo objectForKey:Weibo_Status]){
             StatusModel *status = [[StatusModel alloc] init];
             [status reflectDataFromOtherObject:dic];

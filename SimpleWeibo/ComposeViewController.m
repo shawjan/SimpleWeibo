@@ -11,6 +11,7 @@
 #import "PickPhotosCollectionVC.h"
 #import "PickPhotosCollectionVC.h"
 #import <Masonry/Masonry.h>
+#import <WeiboSDK.h>
 
 @interface ComposeViewController ()<PickPhotosCVCDelegate, UICollectionViewDataSource, UICollectionViewDelegate, ComposePhotoCellDelegate, UITextViewDelegate>
 @property (strong, nonatomic) IBOutlet ComposePhotoGridView *imageGridView;
@@ -125,6 +126,104 @@ static CGSize ComposePhotoGridViewCellSize;
     [self.view bringSubviewToFront:self.toolBarView];
 }
 
+-(void)uploadImageWithText:(NSData*)imageData
+{
+    AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"statuses/upload.json"];
+    [WBHttpRequest requestWithURL:urlStr
+                       httpMethod:@"POST"
+                           params:@{@"access_token":appDelegate.wbToken,
+                                    @"status":self.composeTextView.text,
+                                    @"pic": imageData}
+                            queue:[NSOperationQueue mainQueue]
+            withCompletionHandler:^(WBHttpRequest *httpRequest, id result, NSError *error) {
+                NSString *resultStr = nil;
+                if(!error){
+                    resultStr = @"发送成功！";
+                    self.composeTextView.text = @"分享新鲜的事...";
+                    self.composeTextView.textColor = [UIColor lightGrayColor];
+                    if([self.composeTextView isFirstResponder]){
+                        [self.composeTextView resignFirstResponder];
+                    }
+                    [self.selections removeAllObjects];
+                    [self.imageGridView reloadData];
+                }else{
+                    resultStr = @"发送失败，请稍后再试";
+                    NSLog(@"%ld :%@ - %@", error.code, error.domain, error.userInfo);
+                }
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:resultStr preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action){
+                    if(error.code <= 21314 && error.code >= 21317){
+                        AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+                        if([appDelegate.window.rootViewController isKindOfClass:[UITabBarController class]]){
+                            [appDelegate.window.rootViewController performSegueWithIdentifier:@"Show LoginView" sender:self];
+                        }
+                    }
+                }];
+                [alert addAction:alertAction];
+                [self presentViewController:alert animated:YES completion:nil];
+            }];
+}
+
+- (IBAction)composeButtonClicked:(id)sender {
+    if(![self.composeTextView.text isEqualToString:@""]){
+        if([self.composeTextView.text length] > 140){
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"内容太长，请删减！" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+            [alert addAction:alertAction];
+            [self presentViewController:alert animated:YES completion:nil];
+            return;
+        }
+        
+        if([self.selections count] > 0){
+            //上传多张图片的接口需要授权，因此只上传一张图片
+            [self.cachingImageManager requestImageForAsset:self.selections[0]
+                                                targetSize:self.view.frame.size
+                                               contentMode:PHImageContentModeAspectFill
+                                                   options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+                                                       NSData *imageData = UIImageJPEGRepresentation(result, 0.8);
+                                                       [self uploadImageWithText:imageData];
+            }];
+            
+        }else{
+            AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+            NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"statuses/update.json"];
+            [WBHttpRequest requestWithURL:urlStr
+                               httpMethod:@"POST"
+                                   params:@{@"access_token":appDelegate.wbToken,
+                                            @"status":self.composeTextView.text}
+                                    queue:[NSOperationQueue mainQueue]
+                    withCompletionHandler:^(WBHttpRequest *httpRequest, id result, NSError *error) {
+                        NSString *resultStr = nil;
+                        if(!error){
+                            resultStr = @"发送成功！";
+                            self.composeTextView.text = @"分享新鲜的事...";
+                            self.composeTextView.textColor = [UIColor lightGrayColor];
+                            if([self.composeTextView isFirstResponder]){
+                                [self.composeTextView resignFirstResponder];
+                            }
+                            [self.selections removeAllObjects];
+                            [self.imageGridView reloadData];
+                        }else{
+                            resultStr = @"发送失败，请稍后再试";
+                        }
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:resultStr preferredStyle:UIAlertControllerStyleAlert];
+                        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action){
+                            if(error.code <= 21314 && error.code >= 21317){
+                                AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+                                if([appDelegate.window.rootViewController isKindOfClass:[UITabBarController class]]){
+                                    [appDelegate.window.rootViewController performSegueWithIdentifier:@"Show LoginView" sender:self];
+                                }
+                            }
+                        }];
+                        [alert addAction:alertAction];
+                        [self presentViewController:alert animated:YES completion:nil];
+                    }];
+
+        }
+    }
+    
+}
 
 -(PHCachingImageManager *)cachingImageManager
 {
@@ -139,16 +238,20 @@ static CGSize ComposePhotoGridViewCellSize;
 {
     NSIndexPath *indexPath = [self.imageGridView indexPathForCell:cell];
     [self.selections removeObjectAtIndex:indexPath.item];
-    if(self.selections.count <2){
+    if(self.selections.count <1){
         [self.imageGridView reloadData];
-    }else{
+    }else if(self.selections.count < 8){
         [self.imageGridView deleteItemsAtIndexPaths:@[indexPath]];
+        
+    }else if(self.selections.count == 8){
+        [self.imageGridView reloadItemsAtIndexPaths:@[indexPath]];
     }
     [self adjustGridView:self.selections.count];
 }
 
 -(void)respondsToNextBtn:(NSArray *)selections
 {
+    [self.selections removeAllObjects];
     [self.selections addObjectsFromArray:selections];
     
     CGFloat gridWidth = (ScreenWidth - 22) / 3;
@@ -262,7 +365,7 @@ static CGSize ComposePhotoGridViewCellSize;
                 PickPhotosCollectionVC *pickPhotoCVC = nav.viewControllers[0];
                 pickPhotoCVC.delegate = self;
                 if(self.selections.count > 0){
-                    [pickPhotoCVC.selections addObject:self.selections];
+                    [pickPhotoCVC.selections addObjectsFromArray:self.selections];
                 }
             }
         }

@@ -246,6 +246,21 @@
     [self setCreatAtLabText:[status timeReversal:status.created_at]];
     [self setSourceLabText:[status validateHref:status.source]];
     self.statusView.textLabel.text = status.text;
+    if(status.reposts_count <= 0){
+        self.repostButton.titleLabel.text = @"转发";
+    }else{
+        self.repostButton.titleLabel.text = [NSString stringWithFormat: @"%d", status.reposts_count];
+    }
+    if(status.comments_count <= 0){
+        self.commentsButton.titleLabel.text = @"评论";
+    }else{
+        self.commentsButton.titleLabel.text = [NSString stringWithFormat:@"%d", status.comments_count];
+    }
+    if(status.attitudes_count <= 0){
+        self.attitudeButton.titleLabel.text = @"赞";
+    }else{
+        self.attitudeButton.titleLabel.text = [NSString stringWithFormat:@"%d", status.attitudes_count];
+    }
     
     if(status.retweeted_status){
         NSString *retweeted_statusText = [NSString stringWithFormat:@"@%@:%@", status.retweeted_status.user.screen_name, status.retweeted_status.text];
