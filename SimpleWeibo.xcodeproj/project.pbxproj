@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2A0330EC1CD0FA6300E5A2EF /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0330EB1CD0FA6200E5A2EF /* WebViewController.m */; };
 		2A0496B11CD2EEC900DCE10B /* ComposePhotoGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0496B01CD2EEC900DCE10B /* ComposePhotoGridView.m */; };
+		2A06F11B1CD67EFB004ECBC5 /* SJButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06F11A1CD67EFB004ECBC5 /* SJButton.m */; };
 		2A0868D91CC6261400F6A639 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0868D81CC6261400F6A639 /* LoginViewController.m */; };
 		2A0868DC1CC628AB00F6A639 /* MainTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0868DB1CC628AB00F6A639 /* MainTableViewController.m */; };
 		2A0868DF1CC628D800F6A639 /* MineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0868DE1CC628D800F6A639 /* MineViewController.m */; };
@@ -59,6 +60,8 @@
 		2A0330ED1CD1021D00E5A2EF /* SimpleWeibo.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleWeibo.pch; sourceTree = "<group>"; };
 		2A0496AF1CD2EEC900DCE10B /* ComposePhotoGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposePhotoGridView.h; sourceTree = "<group>"; };
 		2A0496B01CD2EEC900DCE10B /* ComposePhotoGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComposePhotoGridView.m; sourceTree = "<group>"; };
+		2A06F1191CD67EFB004ECBC5 /* SJButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJButton.h; sourceTree = "<group>"; };
+		2A06F11A1CD67EFB004ECBC5 /* SJButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJButton.m; sourceTree = "<group>"; };
 		2A0868D71CC6261400F6A639 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		2A0868D81CC6261400F6A639 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		2A0868DA1CC628AB00F6A639 /* MainTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainTableViewController.h; sourceTree = "<group>"; };
@@ -166,6 +169,8 @@
 				2A0EE8141CCFBE13005A3009 /* SJMovieView.m */,
 				2A0EE8161CCFBE64005A3009 /* SJPageView.h */,
 				2A0EE8171CCFBE64005A3009 /* SJPageView.m */,
+				2A06F1191CD67EFB004ECBC5 /* SJButton.h */,
+				2A06F11A1CD67EFB004ECBC5 /* SJButton.m */,
 			);
 			name = TimelineView;
 			sourceTree = "<group>";
@@ -455,6 +460,7 @@
 				2A0C246A1CC7B1BA00DE9EB5 /* ComposeViewController.m in Sources */,
 				2A0330EC1CD0FA6300E5A2EF /* WebViewController.m in Sources */,
 				2A0868DC1CC628AB00F6A639 /* MainTableViewController.m in Sources */,
+				2A06F11B1CD67EFB004ECBC5 /* SJButton.m in Sources */,
 				2A0EE8111CCFA600005A3009 /* YYFPSLabel.m in Sources */,
 				2AB61B811CC521B800C5B012 /* main.m in Sources */,
 			);

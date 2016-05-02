@@ -10,12 +10,12 @@
 #import "WeiboTableViewCell.h"
 #import "SJStatusView.h"
 #import <Masonry/Masonry.h>
-
+#import "SJButton.h"
 
 @interface WeiboTableViewCell ()
-@property(nonatomic, strong) UIButton *repostButton;
-@property(nonatomic, strong) UIButton *commentsButton;
-@property(nonatomic, strong) UIButton *attitudeButton;
+@property(nonatomic, strong) SJButton *repostButton;
+@property(nonatomic, strong) SJButton *commentsButton;
+@property(nonatomic, strong) SJButton *attitudeButton;
 
 @property(nonatomic, strong) UIImageView *avatarImg;
 @property(nonatomic, strong) UILabel *screenNameLab;
@@ -82,16 +82,18 @@
 }
 
 -(void)setupViews{
-    self.repostButton  = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.repostButton setImage:[UIImage imageNamed:@"timeline_icon_retweet"] forState:UIControlStateNormal];
-    [self.repostButton setTitle:@"转发" forState:UIControlStateNormal];
+    self.repostButton  = [[SJButton alloc] init];
+//    [self.repostButton setImage:[UIImage imageNamed:@"timeline_icon_retweet"] forState:UIControlStateNormal];
+//    [self.repostButton setTitle:@"转发" forState:UIControlStateNormal];
+    [self.repostButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_retweet"]];
+    [self.repostButton.buttonLabel setText:@"转发"];
     self.repostButton.titleLabel.font = [UIFont systemFontOfSize:12];
     [self.repostButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [self.contentView addSubview:self.repostButton];
     [self.repostButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.contentView.mas_bottom);
         make.left.equalTo(self.contentView.mas_left);
-        make.height.mas_equalTo(30);
+        make.height.mas_equalTo(TimelineButtonHeight);
         make.width.equalTo(self.contentView.mas_width).multipliedBy(0.33).offset(-0.5);
     }];
     
@@ -105,11 +107,10 @@
         make.width.mas_equalTo(1);
     }];
     
-    self.commentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.commentsButton setImage:[UIImage imageNamed:@"timeline_icon_comment"] forState:UIControlStateNormal];
-    self.commentsButton.titleLabel.font = [UIFont systemFontOfSize:12];
-    [self.commentsButton setTitle:@"评论" forState:UIControlStateNormal];
-    [self.commentsButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    self.commentsButton = [[SJButton alloc]init];
+    [self.commentsButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_comment"]];
+    //self.commentsButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [self.commentsButton.buttonLabel setText:@"评论"];
     [self.contentView addSubview:self.commentsButton];
     [self.commentsButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.repostButton.mas_bottom);
@@ -128,11 +129,11 @@
         make.width.mas_equalTo(1);
     }];
     
-    self.attitudeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.attitudeButton setImage:[UIImage imageNamed:@"timeline_icon_like_disable"] forState:UIControlStateNormal];
-    self.attitudeButton.titleLabel.font = [UIFont systemFontOfSize:12];
-    [self.attitudeButton setTitle:@"赞" forState:UIControlStateNormal];
-    [self.attitudeButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    self.attitudeButton = [[SJButton alloc ]init];
+    [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like_disable"]];
+    //self.attitudeButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [self.attitudeButton.buttonLabel setText:@"赞"];
+    //[self.attitudeButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [self.contentView addSubview:self.attitudeButton];
     [self.attitudeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.repostButton.mas_bottom);
@@ -247,19 +248,19 @@
     [self setSourceLabText:[status validateHref:status.source]];
     self.statusView.textLabel.text = status.text;
     if(status.reposts_count <= 0){
-        self.repostButton.titleLabel.text = @"转发";
+        self.repostButton.buttonLabel.text = @"转发";
     }else{
-        self.repostButton.titleLabel.text = [NSString stringWithFormat: @"%d", status.reposts_count];
+        self.repostButton.buttonLabel.text = [NSString stringWithFormat: @"%d", status.reposts_count];
     }
     if(status.comments_count <= 0){
-        self.commentsButton.titleLabel.text = @"评论";
+        self.commentsButton.buttonLabel.text = @"评论";
     }else{
-        self.commentsButton.titleLabel.text = [NSString stringWithFormat:@"%d", status.comments_count];
+        self.commentsButton.buttonLabel.text = [NSString stringWithFormat:@"%d", status.comments_count];
     }
     if(status.attitudes_count <= 0){
-        self.attitudeButton.titleLabel.text = @"赞";
+        self.attitudeButton.buttonLabel.text = @"赞";
     }else{
-        self.attitudeButton.titleLabel.text = [NSString stringWithFormat:@"%d", status.attitudes_count];
+        self.attitudeButton.buttonLabel.text = [NSString stringWithFormat:@"%d", status.attitudes_count];
     }
     
     if(status.retweeted_status){

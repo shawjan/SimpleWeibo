@@ -312,7 +312,7 @@ static CGSize AssetGridThumbnailSize;
     if(indexPath.item != 0){
         PhotoCollectionViewCell *cell = (PhotoCollectionViewCell*)[collectionView cellForItemAtIndexPath:indexPath];
         
-        FullScreenImageView *imageView = [[FullScreenImageView alloc] initWithFrame:self.view.frame withSelected:cell.selected numberOfSelected:collectionView.indexPathsForSelectedItems.count withIndexPath:indexPath withType:FullScreenImageViewSelectableType];
+        FullScreenImageView *imageView = [[FullScreenImageView alloc] initWithFrame:self.view.frame withSelected:cell.selected numberOfSelected:collectionView.indexPathsForSelectedItems.count withIndexPath:indexPath withType:FullScreenImageViewSelectableType parentVC:self];
         imageView.delegate = self;
         [self.view.window addSubview:imageView];
         [self.imageManager requestImageForAsset:self.assetsFetchResults[indexPath.item - 1]
@@ -346,7 +346,7 @@ static CGSize AssetGridThumbnailSize;
         [self.collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
         PhotoCollectionViewCell *cell = (PhotoCollectionViewCell*)[collectionView cellForItemAtIndexPath:indexPath];
     
-        FullScreenImageView *imageView = [[FullScreenImageView alloc] initWithFrame:self.view.frame withSelected:cell.selected numberOfSelected:collectionView.indexPathsForSelectedItems.count withIndexPath:indexPath withType:FullScreenImageViewSelectableType];
+        FullScreenImageView *imageView = [[FullScreenImageView alloc] initWithFrame:self.view.frame withSelected:cell.selected numberOfSelected:collectionView.indexPathsForSelectedItems.count withIndexPath:indexPath withType:FullScreenImageViewSelectableType parentVC:self];
         imageView.delegate = self;
         [self.imageManager requestImageForAsset:self.assetsFetchResults[indexPath.item - 1]
                                      targetSize:self.view.frame.size

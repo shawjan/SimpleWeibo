@@ -17,17 +17,29 @@
 @property(nonatomic, assign) BOOL selected;
 @property(nonatomic, strong) NSIndexPath *indexPath;
 @property(nonatomic, assign) NSInteger selectedNum;
+@property(nonatomic, strong) PickPhotosCollectionVC *pvc;
 @end
 
 @implementation FullScreenImageView
 
--(instancetype)initWithFrame:(CGRect)frame withSelected:(BOOL)selected numberOfSelected:(NSInteger)selectedNum withIndexPath:(NSIndexPath*)indexPath withType:(enum FullScreenImageViewType)viewType{
+-(instancetype)initWithFrame:(CGRect)frame withSelected:(BOOL)selected numberOfSelected:(NSInteger)selectedNum withIndexPath:(NSIndexPath*)indexPath withType:(enum FullScreenImageViewType)viewType parentVC:(id)pvc{
     self = [super initWithFrame:frame];
     if(self){
         self.selectedNum = selectedNum;
         self.viewType = viewType;
         self.selected = selected;
         self.indexPath = indexPath;
+        self.pvc = pvc;
+        [self setupView];
+    }
+    return self;
+}
+
+-(instancetype)initWithFrame:(CGRect)frame withType:(enum FullScreenImageViewType)viewType
+{
+    self = [super initWithFrame:frame];
+    if(self){
+        self.viewType = viewType;
         [self setupView];
     }
     return self;
@@ -89,6 +101,14 @@
     }else{
         if(self.selectedNum < 9){
             self.checkImageView.image = [UIImage imageNamed:@"compose_guide_check_box_right"];
+        }else{
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"只能够选择9张图" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action){
+                self.selected = NO;
+            }];
+            [alert addAction:alertAction];
+            [self.pvc presentViewController:alert animated:YES completion:nil];
+            
         }
     }
 }

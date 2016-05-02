@@ -68,7 +68,7 @@
 -(UITableView *)tableView
 {
     if(!_tableView){
-        CGRect frame = self.accountTFCV.frame;
+        //CGRect frame = self.accountTFCV.frame;
         _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.passwordTFCV.frame.origin.y, self.view.frame.size.width, 0)];
         _tableView.delegate = self;
         _tableView.dataSource = self;
@@ -238,7 +238,7 @@
         [UIView commitAnimations];
     }else{
         [self.tableView reloadData];
-        CGRect aTFFrame = self.accountTFCV.frame;
+        //CGRect aTFFrame = self.accountTFCV.frame;
         frame.origin.y = self.passwordTFCV.frame.origin.y;
         frame.size.height = gapBetweenTextField;
         [UIView beginAnimations:nil context:nil];

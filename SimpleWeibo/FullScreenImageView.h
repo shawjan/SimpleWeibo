@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "PickPhotosCollectionVC.h"
 
 NS_ENUM(NSInteger, FullScreenImageViewType){
     FullScreenImageViewNoneType = 0,
@@ -24,7 +24,8 @@ NS_ENUM(NSInteger, FullScreenImageViewType){
 
 @property(nonatomic, assign) id <CheckStatusChangeObserver> delegate;
 
--(instancetype)initWithFrame:(CGRect)frame withSelected:(BOOL)selected numberOfSelected:(NSInteger)selectedNum withIndexPath:(NSIndexPath*)indexPath withType:(enum FullScreenImageViewType)viewType;
+-(instancetype)initWithFrame:(CGRect)frame withSelected:(BOOL)selected numberOfSelected:(NSInteger)selectedNum withIndexPath:(NSIndexPath*)indexPath withType:(enum FullScreenImageViewType)viewType parentVC:(id)pvc;
+-(instancetype)initWithFrame:(CGRect)frame withType:(enum FullScreenImageViewType)viewType;
 
 -(void)updateImage:(UIImage*)image;
 

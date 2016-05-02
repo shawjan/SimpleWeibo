@@ -17,12 +17,17 @@
 
 @implementation TabBarViewController
 
+-(void)setSelectedIndex:(NSUInteger)selectedIndex
+{
+    
+}
+
 -(UIButton *)composeBtn
 {
     if(!_composeBtn){
         CGFloat tabBarHeight = self.tabBar.frame.size.height;
         CGFloat tabBarWidth = self.tabBar.frame.size.width;
-        _composeBtn = [[UIButton alloc] initWithFrame:CGRectMake((tabBarWidth - tabBarHeight)/ 2 , 0, tabBarHeight, tabBarHeight)];
+        _composeBtn = [[UIButton alloc] initWithFrame:CGRectMake((tabBarWidth - tabBarHeight)/ 2 , 4, tabBarHeight, tabBarHeight - 6)];
         [_composeBtn setImage:[UIImage imageNamed:@"tabbar_compose_icon_add"] forState:UIControlStateNormal];
         [_composeBtn setBackgroundColor:[UIColor colorWithRed:249 /255.0 green:102 / 255.0 blue:0.0 alpha:1.0]];
         [self.tabBar addSubview:_composeBtn];
@@ -34,10 +39,15 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     UITabBarItem *item = self.tabBar.items[0];
-    [item setSelectedImage:[UIImage imageNamed:@"tabbar_home_highlighted"]];
+    UIImage *image = [UIImage imageNamed:@"tabbar_home_highlighted"];
+    image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    [item setSelectedImage:image];
+    [item setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:249 /255.0 green:102 / 255.0 blue:0.0 alpha:1.0]} forState:UIControlStateSelected];
     item = self.tabBar.items[2];
-    [item setSelectedImage:[UIImage imageNamed:@"tabbar_profile_highlighted"]];
-    
+    image = [UIImage imageNamed:@"tabbar_profile_highlighted"];
+    image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    [item setSelectedImage:image];
+    [item setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:249 /255.0 green:102 / 255.0 blue:0.0 alpha:1.0]} forState:UIControlStateSelected];
 }
 
 -(void)awakeFromNib
@@ -48,8 +58,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    //[self.composeBtn addTarget:self action:@selector(composeBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    
+    [self.composeBtn addTarget:self action:@selector(composeBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 
@@ -71,6 +80,7 @@
 {
     //UINavigationController *navCon = [[UINavigationController alloc] init];
     //ComposeViewController *composeVC = [[ComposeViewController alloc] init];
+    [self performSegueWithIdentifier:@"Show ComposeVC" sender:self];
 }
 
 /*
