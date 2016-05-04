@@ -55,7 +55,8 @@
     [self.movieView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.mas_equalTo(self.mas_bottom).offset(-10);
         make.left.mas_equalTo(self.mas_left).offset(10);
-        make.size.mas_equalTo(CGSizeMake(height, height));
+        make.right.mas_equalTo(self.mas_right).offset(-10);
+        make.height.mas_equalTo(height);
     }];
     self.movieView.hidden = YES;
     
@@ -65,7 +66,8 @@
     [self.pageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.mas_equalTo(self.mas_bottom).offset(-10);
         make.left.mas_equalTo(self.mas_left).offset(10);
-        make.size.mas_equalTo(CGSizeMake(height, height));
+        make.right.mas_equalTo(self.mas_right).offset(-10);
+        make.height.mas_equalTo(height);
     }];
     self.pageView.hidden = YES;
 
@@ -152,7 +154,7 @@
     [self.movieView mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.bottom.mas_equalTo(self.mas_bottom).offset(-10);
         make.left.mas_equalTo(self.mas_left).offset(10);
-        make.size.mas_equalTo(CGSizeMake(height, height));
+        make.size.mas_equalTo(CGSizeMake(ScreenWidth - 20, height));
     }];
     self.pageView.hidden = YES;
     self.movieView.hidden = NO;
@@ -169,7 +171,7 @@
     [self.pageView mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.bottom.mas_equalTo(self.mas_bottom).offset(-10);
         make.left.mas_equalTo(self.mas_left).offset(10);
-        make.size.mas_equalTo(CGSizeMake(height, height));
+        make.size.mas_equalTo(CGSizeMake(ScreenWidth - 20, height));
         make.top.mas_equalTo(self.textLabel.mas_bottom).priorityLow();
     }];
     self.pageView.hidden = NO;

@@ -33,7 +33,7 @@ NS_ENUM(NSInteger, StatusModelType){
 @property(nonatomic, assign) float height;
 @property(nonatomic, strong) NSAttributedString *attributedString;
 @property(nonatomic, assign) BOOL isRetweeted;
-
+@property(nonatomic, assign) BOOL favorited;
 +(NSMutableArray*)jsonToStatusModelArray:(NSMutableArray*)statuses;
 //+(StatusModel*)jsonToStatusModel:(NSDictionary*)status;
 //+(UserModel*)jsonToUserModel:(NSDictionary*)user;

@@ -18,6 +18,7 @@
 #import "FullScreenImageView.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "ComposeViewController.h"
+#import "WebViewController.h"
 
 #define RefreshViewHeight 50
 
@@ -157,8 +158,12 @@
         NSLog(@"头像");
     }else if([[info objectForKey:WhichType]isEqualToString:PageViewClicked]){
         NSLog(@"链接");
+        WebViewController *webCon = [[WebViewController alloc] initWithURL:[noti object]];
+        UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:webCon];
+        [self presentViewController:navCon animated:YES completion:nil];
     }else if([[info objectForKey:WhichType]isEqualToString:MovieViewClicked]){
         NSLog(@"电影链接");
+        
     }
 }
 
@@ -228,7 +233,6 @@
         self.statusesInfo = nil;
         [self.tableView reloadData];
     }
-    [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 #pragma mark - Table view data source

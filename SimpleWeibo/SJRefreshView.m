@@ -33,7 +33,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor redColor];
+        self.backgroundColor = [UIColor lightGrayColor];
         
         CGFloat actViewWith = frame.size.height / 3;
         _activityView = [[UIActivityIndicatorView alloc] init];

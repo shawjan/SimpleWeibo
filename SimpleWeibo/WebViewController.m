@@ -31,10 +31,17 @@
 -(void)viewDidLoad
 {
     [super viewDidLoad];
+    UIBarButtonItem *barButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStyleDone target:self action:@selector(backBarButtonClicked:)];
+    [barButtonItem setTintColor:[UIColor colorWithRed:249 /255.0 green:102 / 255.0 blue:0.0 alpha:1.0]];
+    self.navigationItem.leftBarButtonItem = barButtonItem;
     _webView.frame = self.view.bounds;
     [self.view addSubview:self.webView];
     [self.webView loadRequest:[NSURLRequest requestWithURL:self.url]];
 }
 
+-(void)backBarButtonClicked:(UIBarButtonItem*)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 @end

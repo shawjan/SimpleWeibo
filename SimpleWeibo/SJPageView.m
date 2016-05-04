@@ -76,15 +76,16 @@
     }];
     
     self.button = [[UIButton alloc] init];
-    [self.button setBackgroundColor:[UIColor grayColor]];
+    [self.button setBackgroundColor:[UIColor clearColor]];
     [self addSubview:self.button];
     [self.button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.button mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(self.frame.size);
+        make.width.mas_equalTo(self.mas_width);
         make.top.mas_equalTo(self.mas_top);
         make.left.mas_equalTo(self.mas_left);
+        make.height.mas_equalTo(SJPageViewHeight);
     }];
-    //self.backgroundColor = [UIColor grayColor];
+    self.backgroundColor = [UIColor colorWithRed:235.0/255.0 green:235.0/255.0 blue:242.0/255.0 alpha:1.0];
 }
 
 -(void)buttonClicked:(UIButton*)sender{

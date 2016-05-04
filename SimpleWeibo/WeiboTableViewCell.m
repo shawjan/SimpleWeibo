@@ -268,6 +268,13 @@
     }else{
         self.attitudeButton.buttonLabel.text = [NSString stringWithFormat:@"%d", status.attitudes_count];
     }
+    if(status.favorited){
+        [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like"]];
+        self.attitudeButton.selected = YES;
+    }else{
+        [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like_disable"]];
+        self.attitudeButton.selected = NO;
+    }
     
     if(status.retweeted_status){
         NSString *retweeted_statusText = [NSString stringWithFormat:@"@%@:%@", status.retweeted_status.user.screen_name, status.retweeted_status.text];
@@ -329,21 +336,27 @@
 -(void)setLike
 {
     self.attitudeButton.selected = !self.attitudeButton.selected;
-    int zan = self.attitudeButton.buttonLabel.text.intValue;
+    int zan;
     if([self.attitudeButton.buttonLabel.text isEqualToString:@"赞"]){
         zan = 0;
+    }else {
+        zan = self.attitudeButton.buttonLabel.text.intValue;
+    }
+    if(self.attitudeButton.selected){
+        ++zan;
     }else{
-        if(self.attitudeButton.selected){
-            ++zan;
-        }else{
-            --zan;
-        }
+        --zan;
+    }
+    if(zan == 0){
+        self.attitudeButton.buttonLabel.text = @"赞";
+    }else {
+        self.attitudeButton.buttonLabel.text = [NSString stringWithFormat:@"%d", zan];
     }
     if(self.attitudeButton.selected){
         [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like"]];
     }else{
         [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like_disable"]];
     }
-    self.attitudeButton.buttonLabel.text = [NSString stringWithFormat:@"%d", zan];
+    
 }
 @end

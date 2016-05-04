@@ -240,7 +240,7 @@
                                                 </variation>
                                             </view>
                                         </subviews>
-                                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                         <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstItem="pAl-b7-p5u" firstAttribute="width" secondItem="qPw-ZE-jcG" secondAttribute="width" id="03x-ox-LhL"/>
@@ -451,7 +451,7 @@
                                 </variation>
                             </scrollView>
                         </subviews>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="e84-lQ-BIc" firstAttribute="top" secondItem="yoY-x0-elH" secondAttribute="topMargin" id="03N-Md-haj"/>
                             <constraint firstItem="SuT-Xf-k8e" firstAttribute="centerY" secondItem="yoY-x0-elH" secondAttribute="centerY" id="339-7P-bZY"/>
@@ -585,6 +585,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="微博" id="hYe-sl-nhg">
                         <barButtonItem key="rightBarButtonItem" title="本地" id="Q98-p8-6iu">
+                            <color key="tintColor" red="0.90196078430000004" green="0.42352941179999998" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="requestTypeBtnClicked:" destination="vlL-aJ-eHr" id="jWd-Yh-KDC"/>
                             </connections>
@@ -908,6 +909,7 @@
                     <navigationItem key="navigationItem" title="发微博" id="YcT-SS-uH0">
                         <barButtonItem key="leftBarButtonItem" id="3Ye-c1-kaE"/>
                         <barButtonItem key="rightBarButtonItem" title="发送" id="rcq-Lf-wTp">
+                            <color key="tintColor" red="0.90196078430000004" green="0.42352941179999998" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="composeButtonClicked:" destination="7jt-TK-dmH" id="cjv-yO-rhw"/>
                             </connections>
@@ -944,7 +946,7 @@
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" text="分享新鲜事..." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="DY1-2L-HbD">
                                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
@@ -1361,11 +1363,13 @@
                     </view>
                     <navigationItem key="navigationItem" title="发布微博" id="g5a-Ez-3i3">
                         <barButtonItem key="leftBarButtonItem" title="取消" id="YJa-Wk-VEv">
+                            <color key="tintColor" red="0.90196078430000004" green="0.42352941179999998" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="dismissViewCon:" destination="M9s-iA-CeQ" id="G9C-qY-hrb"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="发送" id="RYJ-0h-EPC">
+                            <color key="tintColor" red="0.90196078430000004" green="0.42352941179999998" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="composeButtonClicked:" destination="M9s-iA-CeQ" id="r9K-25-GEW"/>
                             </connections>

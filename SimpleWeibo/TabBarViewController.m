@@ -30,6 +30,9 @@
         _composeBtn = [[UIButton alloc] initWithFrame:CGRectMake((tabBarWidth - tabBarHeight)/ 2 , 4, tabBarHeight, tabBarHeight - 6)];
         [_composeBtn setImage:[UIImage imageNamed:@"tabbar_compose_icon_add"] forState:UIControlStateNormal];
         [_composeBtn setBackgroundColor:[UIColor colorWithRed:249 /255.0 green:102 / 255.0 blue:0.0 alpha:1.0]];
+        _composeBtn.clipsToBounds = YES;
+        _composeBtn.layer.masksToBounds = YES;
+        _composeBtn.layer.cornerRadius = 2.0f;
         [self.tabBar addSubview:_composeBtn];
     }
     return _composeBtn;
