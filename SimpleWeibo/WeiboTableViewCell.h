@@ -14,7 +14,7 @@
 -(void)setStatusViewData:(StatusModel *)status;
 +(CGFloat)getCellHeightWithStatus:(StatusModel*)status;
 
-
+-(void)setLike;
 //-(void)setAvartarImageView:(NSURL*)imageURL;
 //
 //-(void)setScreenNameLabText:(NSString*)text;

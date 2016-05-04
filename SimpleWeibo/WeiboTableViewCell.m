@@ -325,4 +325,25 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:RespondToCellButton object:self userInfo:@{WhichType:LikeButtonClicked}];
 }
 
+
+-(void)setLike
+{
+    self.attitudeButton.selected = !self.attitudeButton.selected;
+    int zan = self.attitudeButton.buttonLabel.text.intValue;
+    if([self.attitudeButton.buttonLabel.text isEqualToString:@"赞"]){
+        zan = 0;
+    }else{
+        if(self.attitudeButton.selected){
+            ++zan;
+        }else{
+            --zan;
+        }
+    }
+    if(self.attitudeButton.selected){
+        [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like"]];
+    }else{
+        [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like_disable"]];
+    }
+    self.attitudeButton.buttonLabel.text = [NSString stringWithFormat:@"%d", zan];
+}
 @end

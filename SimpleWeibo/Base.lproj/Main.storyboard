@@ -927,7 +927,7 @@
         <!--发布微博-->
         <scene sceneID="qVF-nd-5W8">
             <objects>
-                <viewController id="M9s-iA-CeQ" customClass="ComposeViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Compose View Con" id="M9s-iA-CeQ" customClass="ComposeViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wad-0k-LhT"/>
                         <viewControllerLayoutGuide type="bottom" id="vBC-Zd-5lc"/>

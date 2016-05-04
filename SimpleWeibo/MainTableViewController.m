@@ -17,6 +17,7 @@
 #import "SJRefreshView.h"
 #import "FullScreenImageView.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import "ComposeViewController.h"
 
 #define RefreshViewHeight 50
 
@@ -119,10 +120,28 @@
     NSDictionary *info = [noti userInfo];
     if([[info objectForKey:WhichType] isEqualToString:RepostButtonClicked]){
         NSLog(@"转发");
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        
+        ComposeViewController *compose = [sb instantiateViewControllerWithIdentifier:@"Compose View Con"];
+        compose.title = @"转发微博";
+        compose.navigationItem.rightBarButtonItem.enabled = NO;
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:compose];
+        [self presentViewController:nav animated:YES completion:nil];
     }else if([[info objectForKey:WhichType] isEqualToString:CommentButtonClicked]){
         NSLog(@"评论");
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        
+        ComposeViewController *compose = [sb instantiateViewControllerWithIdentifier:@"Compose View Con"];
+        compose.title = @"评论微博";
+        compose.navigationItem.rightBarButtonItem.enabled = NO;
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:compose];
+        [self presentViewController:nav animated:YES completion:nil];
     }else if([[info objectForKey:WhichType] isEqualToString:LikeButtonClicked]){
         NSLog(@"赞");
+        WeiboTableViewCell *cell = [noti object];
+        if([cell isKindOfClass:[WeiboTableViewCell class]]){
+            [cell setLike];
+        }
     }else if([[info objectForKey:WhichType] isEqualToString:LabelClicked]){
         
     }else if([[info objectForKey:WhichType] isEqualToString:ImageViewClicked]){
