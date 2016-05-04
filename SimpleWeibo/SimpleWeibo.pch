@@ -28,6 +28,9 @@
 #define UserAvatorClicked @"UserAvatorClicked"
 #define LabelClicked @"LabelClicked"
 #define RespondToCellButton @"RespondToCellButton"
+
+#define ImageData @"ImageData"
+#define WhichImage @"WhichImage"
 #define MainContentSize 15
 #define SubContentSize 12
 #define TimelineButtonWidth (ScreenWidth * 0.33)

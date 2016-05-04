@@ -86,7 +86,9 @@
 //    [self.repostButton setImage:[UIImage imageNamed:@"timeline_icon_retweet"] forState:UIControlStateNormal];
 //    [self.repostButton setTitle:@"转发" forState:UIControlStateNormal];
     [self.repostButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_retweet"]];
+    [self.repostButton setBackgroundImage:[UIImage imageNamed:@"cardlist_middle_background_highlighted.9"] forState:UIControlStateHighlighted];
     [self.repostButton.buttonLabel setText:@"转发"];
+    [self.repostButton addTarget:self action:@selector(repostButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     self.repostButton.titleLabel.font = [UIFont systemFontOfSize:12];
     [self.repostButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [self.contentView addSubview:self.repostButton];
@@ -109,8 +111,10 @@
     
     self.commentsButton = [[SJButton alloc]init];
     [self.commentsButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_comment"]];
+    [self.commentsButton setBackgroundImage:[UIImage imageNamed:@"cardlist_middle_background_highlighted.9"] forState:UIControlStateHighlighted];
     //self.commentsButton.titleLabel.font = [UIFont systemFontOfSize:12];
     [self.commentsButton.buttonLabel setText:@"评论"];
+    [self.commentsButton addTarget:self action:@selector(commentButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.commentsButton];
     [self.commentsButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.repostButton.mas_bottom);
@@ -133,8 +137,10 @@
     [self.attitudeButton.buttonImg setImage:[UIImage imageNamed:@"timeline_icon_like_disable"]];
     //self.attitudeButton.titleLabel.font = [UIFont systemFontOfSize:12];
     [self.attitudeButton.buttonLabel setText:@"赞"];
-    //[self.attitudeButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+//    [self.attitudeButton setImage:[UIImage imageNamed:@"timeline_icon_like"] forState:UIControlStateSelected];
+    [self.attitudeButton setBackgroundImage:[UIImage imageNamed:@"cardlist_middle_background_highlighted.9"] forState:UIControlStateHighlighted];
     [self.contentView addSubview:self.attitudeButton];
+    [self.attitudeButton addTarget:self action:@selector(attitudeButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.attitudeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.repostButton.mas_bottom);
         make.top.equalTo(self.repostButton.mas_top);
@@ -302,6 +308,21 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
+}
+
+-(void)repostButtonClicked:(UIButton*)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:RespondToCellButton object:self userInfo:@{WhichType:RepostButtonClicked}];
+}
+
+-(void)commentButtonClicked:(UIButton *)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:RespondToCellButton object:self userInfo:@{WhichType:CommentButtonClicked}];
+}
+
+-(void)attitudeButtonClicked:(UIButton*)sender
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:RespondToCellButton object:self userInfo:@{WhichType:LikeButtonClicked}];
 }
 
 @end

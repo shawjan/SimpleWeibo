@@ -11,7 +11,7 @@
 #import <Masonry/Masonry.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 
-@interface SJGridImageView ()
+@interface SJGridImageView ()<SJImageUnitViewDelegate>
 
 @property (nonatomic, strong) NSMutableArray *images;
 @property(nonatomic, strong) NSMutableArray *srcImages;
@@ -55,6 +55,7 @@
         for(int col = 0; col < 3; ++col){
             SJImageUnitView *imageUnitView = [[SJImageUnitView alloc] init];
             imageUnitView.backgroundColor = [UIColor whiteColor];
+            imageUnitView.delegate = self;
             //imageUnitView.backgroundColor = [UIColor yellowColor];
             imageUnitView.imageView.contentMode = UIViewContentModeScaleAspectFill;
             imageUnitView.imageView.clipsToBounds = YES;
@@ -93,6 +94,7 @@
     }
     
     self.oneHorizonView = [[SJImageUnitView alloc] init];
+    self.oneHorizonView.delegate = self;
     self.oneHorizonView.backgroundColor = [UIColor whiteColor];
     //self.oneHorizonView.backgroundColor = [UIColor redColor];
     self.oneHorizonView.imageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -106,6 +108,7 @@
     }];
     
     self.oneVerticalView = [[SJImageUnitView alloc] init];
+    self.oneHorizonView.delegate =self;
     self.oneVerticalView.backgroundColor = [UIColor whiteColor];
     self.oneVerticalView.imageView.contentMode = UIViewContentModeScaleAspectFill;
     self.oneVerticalView.imageView.clipsToBounds = YES;
@@ -202,6 +205,22 @@
 -(UIImage *)testImage
 {
     return [UIImage imageNamed:@"test.jpg"];
+}
+
+
+-(void)imageButtonClicked:(id)instance
+{
+    if([self.oneHorizonView isEqual:instance]){
+        [[NSNotificationCenter defaultCenter] postNotificationName:RespondToCellButton object:@{ImageData : self.srcImages, WhichImage:[NSNumber numberWithInt:0]} userInfo:@{WhichType:ImageViewClicked}];
+    }else if([self.oneVerticalView isEqual:instance]){
+        [[NSNotificationCenter defaultCenter] postNotificationName:RespondToCellButton object:@{ImageData : self.srcImages, WhichImage:[NSNumber numberWithInt:0]}  userInfo:@{WhichType:ImageViewClicked}];
+    }else{
+        for(int i = 0; i < self.imageViews.count; ++i){
+            if([self.imageViews[i] isEqual:instance]){
+                [[NSNotificationCenter defaultCenter] postNotificationName:RespondToCellButton object:@{ImageData : self.srcImages, WhichImage:[NSNumber numberWithInt:i]}  userInfo:@{WhichType:ImageViewClicked}];
+            }
+        }
+    }
 }
 /*
 // Only override drawRect: if you perform custom drawing.

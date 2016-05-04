@@ -15,6 +15,8 @@
 #import "AppDelegate.h"
 #import <WeiboSDK/WeiboSDK.h>
 #import "SJRefreshView.h"
+#import "FullScreenImageView.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #define RefreshViewHeight 50
 
@@ -85,7 +87,7 @@
     [self.navigationController.view addSubview:self.fpsLabel];
     [self.navigationController.view bringSubviewToFront:self.fpsLabel];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(respondToCellButtonClicked:) name:@"RespondToCellButton" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(respondToCellButtonClicked:) name:RespondToCellButton object:nil];
     
     //self.footerView.backgroundColor = [UIColor yellowColor];
     //self.headerView.backgroundColor = [UIColor yellowColor];
@@ -98,12 +100,13 @@
     //requestForLocalData = YES;
 
     [self.tableView reloadData];
+    
 }
 
 -(void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RespondToCellButton" object:nil];
-    [self.tableView removeObserver:self forKeyPath:@"contentOffSet" context:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:RespondToCellButton object:nil];
+    //[self.tableView removeObserver:self forKeyPath:@"contentOffSet" context:nil];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
@@ -114,21 +117,28 @@
 -(void)respondToCellButtonClicked:(NSNotification *)noti
 {
     NSDictionary *info = [noti userInfo];
-    if([info objectForKey:RepostButtonClicked]){
+    if([[info objectForKey:WhichType] isEqualToString:RepostButtonClicked]){
         NSLog(@"转发");
-    }else if([info objectForKey:CommentButtonClicked]){
+    }else if([[info objectForKey:WhichType] isEqualToString:CommentButtonClicked]){
         NSLog(@"评论");
-    }else if([info objectForKey:LikeButtonClicked]){
+    }else if([[info objectForKey:WhichType] isEqualToString:LikeButtonClicked]){
         NSLog(@"赞");
-    }else if([info objectForKey:LabelClicked]){
+    }else if([[info objectForKey:WhichType] isEqualToString:LabelClicked]){
         
-    }else if([info objectForKey:ImageViewClicked]){
-        
-    }else if([info objectForKey:UserAvatorClicked]){
+    }else if([[info objectForKey:WhichType] isEqualToString:ImageViewClicked]){
+        NSLog(@"图片点击");
+        NSDictionary *dic = [noti object];
+        int index = ((NSNumber*)[dic objectForKey:WhichImage]).intValue;
+        NSDictionary *imageDic = [dic objectForKey:ImageData][index];
+        NSURL *url = [NSURL URLWithString:[imageDic objectForKey:@"url"]];
+        FullScreenImageView *imageView = [[FullScreenImageView alloc] initWithFrame:self.view.frame withType:FullScreenImageViewNoneType];
+        [self.view.window addSubview:imageView];
+        [imageView.imageView sd_setImageWithURL:url];
+    }else if([[info objectForKey:WhichType]isEqualToString:UserAvatorClicked]){
         NSLog(@"头像");
-    }else if([info objectForKey:PageViewClicked]){
+    }else if([[info objectForKey:WhichType]isEqualToString:PageViewClicked]){
         NSLog(@"链接");
-    }else if([info objectForKey:MovieViewClicked]){
+    }else if([[info objectForKey:WhichType]isEqualToString:MovieViewClicked]){
         NSLog(@"电影链接");
     }
 }
@@ -240,6 +250,7 @@
     StatusModel *status  = self.statusesInfo[indexPath.section];
     
     [cell setStatusViewData:status];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.layer.shouldRasterize = YES;
     cell.layer.rasterizationScale = [[UIScreen mainScreen] scale];
     return cell;

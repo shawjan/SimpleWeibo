@@ -12,7 +12,6 @@
 @interface FullScreenImageView()
 @property(nonatomic, strong) UIImageView *checkImageView;
 @property(nonatomic, strong) UIButton *checkButton;
-@property(nonatomic, strong) UIImageView *imageView;
 @property(nonatomic, assign) enum FullScreenImageViewType viewType;
 @property(nonatomic, assign) BOOL selected;
 @property(nonatomic, strong) NSIndexPath *indexPath;

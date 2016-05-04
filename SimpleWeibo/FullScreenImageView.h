@@ -23,6 +23,7 @@ NS_ENUM(NSInteger, FullScreenImageViewType){
 @interface FullScreenImageView : UIView
 
 @property(nonatomic, assign) id <CheckStatusChangeObserver> delegate;
+@property(nonatomic, strong) UIImageView *imageView;
 
 -(instancetype)initWithFrame:(CGRect)frame withSelected:(BOOL)selected numberOfSelected:(NSInteger)selectedNum withIndexPath:(NSIndexPath*)indexPath withType:(enum FullScreenImageViewType)viewType parentVC:(id)pvc;
 -(instancetype)initWithFrame:(CGRect)frame withType:(enum FullScreenImageViewType)viewType;

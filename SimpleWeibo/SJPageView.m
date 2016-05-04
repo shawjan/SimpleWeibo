@@ -46,6 +46,7 @@
     [self addSubview:self.titleLbl];
     self.titleLbl.numberOfLines = 1;
     self.titleLbl.font = [UIFont systemFontOfSize:MainContentSize];
+    self.titleLbl.backgroundColor = [UIColor clearColor];
     [self.titleLbl mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(self.mas_left).offset(SJPageViewHeight);
         make.top.mas_equalTo(self.mas_top);
@@ -56,6 +57,7 @@
     [self addSubview:self.contentLbl];
     self.contentLbl.numberOfLines = 1;
     self.contentLbl.font = [UIFont systemFontOfSize:SubContentSize];
+    self.contentLbl.backgroundColor = [UIColor clearColor];
     [self.contentLbl mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.titleLbl.mas_bottom).offset(6.5);
         make.left.mas_equalTo(self.titleLbl.mas_left);
@@ -66,6 +68,7 @@
     [self addSubview:self.tipLbl];
     self.tipLbl.numberOfLines = 1;
     self.tipLbl.font = [UIFont systemFontOfSize:SubContentSize];
+    self.tipLbl.backgroundColor = [UIColor clearColor];
     [self.tipLbl mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.contentLbl.mas_bottom).offset(6.5);
         make.left.mas_equalTo(self.titleLbl.mas_left);
@@ -73,11 +76,15 @@
     }];
     
     self.button = [[UIButton alloc] init];
+    [self.button setBackgroundColor:[UIColor grayColor]];
     [self addSubview:self.button];
     [self.button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.button mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(self.frame.size).insets(UIEdgeInsetsMake(0, 0, 0, 0));
+        make.size.mas_equalTo(self.frame.size);
+        make.top.mas_equalTo(self.mas_top);
+        make.left.mas_equalTo(self.mas_left);
     }];
+    //self.backgroundColor = [UIColor grayColor];
 }
 
 -(void)buttonClicked:(UIButton*)sender{

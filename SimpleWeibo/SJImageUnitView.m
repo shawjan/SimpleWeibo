@@ -9,6 +9,7 @@
 #import "SJImageUnitView.h"
 #import <Masonry.h>
 
+
 @implementation SJImageUnitView
 
 -(instancetype)init
@@ -23,11 +24,19 @@
         
         self.imageButton = [[UIButton alloc] init];
         [self addSubview:self.imageButton];
+        [self.imageButton addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
         [self.imageButton mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo(self).insets(UIEdgeInsetsMake(2, 2, 2, 2));
         }];
     }
     return self;
+}
+
+-(void)buttonClicked:(UIButton*)sender
+{
+    if([self.delegate respondsToSelector:@selector(imageButtonClicked:)]){
+        [self.delegate imageButtonClicked:self];
+    }
 }
 
 /*
