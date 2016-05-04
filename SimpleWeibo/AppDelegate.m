@@ -124,12 +124,13 @@
             [[NSUserDefaults standardUserDefaults] synchronize];
             
             //UIViewController *viewController = [self getCurrentVC];
-            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-            UIViewController *viewController = [sb instantiateViewControllerWithIdentifier:@"Login ViewCon"];
-            if([viewController isKindOfClass:[LoginViewController class]]){
-                LoginViewController *loginVC = (LoginViewController*)viewController;
-                [loginVC dismissViewControllerAnimated:YES completion:nil];
-            }
+//            UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//            UIViewController *viewController = [sb instantiateViewControllerWithIdentifier:@"Login ViewCon"];
+//            if([viewController isKindOfClass:[LoginViewController class]]){
+//                LoginViewController *loginVC = (LoginViewController*)viewController;
+//                [loginVC dismissViewControllerAnimated:YES completion:nil];
+//            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:DismissLoginVC object:nil];
             NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"account/get_uid.json"];
             [WBHttpRequest requestWithURL:urlStr
                                httpMethod:@"GET"

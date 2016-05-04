@@ -34,9 +34,14 @@
 #define TimelineButtonHeight 30
 
 #define ScreenWidth [[UIScreen mainScreen] bounds].size.width
+#define ScreenHeight [[UIScreen mainScreen] bounds].size.height
+
+#define DismissLoginVC @"DismissLoginVC"
 
 #define GridWidth  ((ScreenWidth - 4) / 3)
 //#define AssetGridThumbnailSize  CGSizeMake(scale, scale);
+
+static BOOL requestForLocalData = YES;
 
 #define StatusContentLabelPadding 10
 #define WhichType @"WhichType"

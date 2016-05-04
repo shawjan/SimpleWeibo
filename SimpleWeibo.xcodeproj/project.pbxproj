@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A003C341CD7C0E7008BD3CD /* SJRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A003C331CD7C0E7008BD3CD /* SJRefreshView.m */; };
 		2A0330EC1CD0FA6300E5A2EF /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0330EB1CD0FA6200E5A2EF /* WebViewController.m */; };
 		2A0496B11CD2EEC900DCE10B /* ComposePhotoGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A0496B01CD2EEC900DCE10B /* ComposePhotoGridView.m */; };
 		2A06F11B1CD67EFB004ECBC5 /* SJButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06F11A1CD67EFB004ECBC5 /* SJButton.m */; };
@@ -55,6 +56,8 @@
 /* Begin PBXFileReference section */
 		075DF444773A62533B32A9FA /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E6924C78DAC316F1832005D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		2A003C321CD7C0E7008BD3CD /* SJRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJRefreshView.h; sourceTree = "<group>"; };
+		2A003C331CD7C0E7008BD3CD /* SJRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJRefreshView.m; sourceTree = "<group>"; };
 		2A0330EA1CD0FA6200E5A2EF /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
 		2A0330EB1CD0FA6200E5A2EF /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
 		2A0330ED1CD1021D00E5A2EF /* SimpleWeibo.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleWeibo.pch; sourceTree = "<group>"; };
@@ -171,6 +174,8 @@
 				2A0EE8171CCFBE64005A3009 /* SJPageView.m */,
 				2A06F1191CD67EFB004ECBC5 /* SJButton.h */,
 				2A06F11A1CD67EFB004ECBC5 /* SJButton.m */,
+				2A003C321CD7C0E7008BD3CD /* SJRefreshView.h */,
+				2A003C331CD7C0E7008BD3CD /* SJRefreshView.m */,
 			);
 			name = TimelineView;
 			sourceTree = "<group>";
@@ -443,6 +448,7 @@
 				2A0496B11CD2EEC900DCE10B /* ComposePhotoGridView.m in Sources */,
 				2A0F6F791CCA4CFE00D1D684 /* WeiboTableViewCell.m in Sources */,
 				2A0BCB061CCE076D0079D8DE /* PhotoCollectionViewCell.m in Sources */,
+				2A003C341CD7C0E7008BD3CD /* SJRefreshView.m in Sources */,
 				2A0EE8121CCFA600005A3009 /* YYWeakProxy.m in Sources */,
 				2A0F6F7C1CCA4FDF00D1D684 /* SJStatusView.m in Sources */,
 				2A0F6F851CCB256B00D1D684 /* UserModel.m in Sources */,

@@ -104,6 +104,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldDidChanged:) name:UITextFieldTextDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dismissLoginVC:) name:DismissLoginVC object:nil];
     
 }
 
@@ -112,6 +113,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:DismissLoginVC object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -125,6 +127,11 @@
     self.avatorImg.clipsToBounds = YES;
     self.avatorImg.layer.masksToBounds = YES;
     self.avatorImg.layer.cornerRadius = self.avatorImg.frame.size.height / 4;
+}
+
+-(void)dismissLoginVC:(NSNotification*)noti
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)tapClicked:(UIGestureRecognizer*)sender

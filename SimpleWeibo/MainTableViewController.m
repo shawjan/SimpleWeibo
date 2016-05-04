@@ -14,13 +14,21 @@
 #import "WebViewController.h"
 #import "AppDelegate.h"
 #import <WeiboSDK/WeiboSDK.h>
+#import "SJRefreshView.h"
 
+#define RefreshViewHeight 50
 
 @interface MainTableViewController ()
 
 @property(nonatomic, strong)NSMutableDictionary *weiboInfo;
 @property(nonatomic, strong) NSMutableArray *statusesInfo;
 @property(nonatomic, strong) YYFPSLabel *fpsLabel;
+@property(nonatomic, strong) UIScrollView *scrollerView;
+
+@property(nonatomic, strong) SJRefreshView *headerView;
+@property(nonatomic, strong) SJRefreshView *footerView;
+@property(nonatomic, assign) NSInteger currentPage;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *requestTypeBtn;
 
 @end
 
@@ -28,6 +36,31 @@
 //#define Weibo_User @"user"
 
 @implementation MainTableViewController
+
+-(SJRefreshView *)headerView
+{
+    if(!_headerView){
+        _headerView = [[SJRefreshView alloc] initWithFrame:CGRectMake(0, - RefreshViewHeight, ScreenWidth, RefreshViewHeight)];
+        //_headerView.label.text = @"下拉刷新...";
+        //_headerView.hidden = YES;
+        _headerView.isRefreshing = NO;
+        _headerView.viewType = SJRefreshFooterView;
+        [self.tableView addSubview:_headerView];
+    }
+    return _headerView;
+}
+
+-(SJRefreshView *)footerView
+{
+    if(!_footerView){
+        _footerView = [[SJRefreshView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, RefreshViewHeight)];
+        _footerView.viewType = SJRefreshFooterView;
+        _footerView.isRefreshing = NO;
+        //_footerView.hidden = YES;
+        self.tableView.tableFooterView = _footerView;
+    }
+    return _footerView;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -53,43 +86,29 @@
     [self.navigationController.view bringSubviewToFront:self.fpsLabel];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(respondToCellButtonClicked:) name:@"RespondToCellButton" object:nil];
-    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
-    if(appDelegate.screen_name){
-        self.navigationItem.title = appDelegate.screen_name;
-    }
-    //获取微博数据的借口，但是由于接口数据调整，拿不到一些图片、视频具体的链接，因此还是换成本地数据。
-//    AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-//    NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"statuses/public_timeline.json"];
-//    [WBHttpRequest requestWithURL:urlStr
-//                       httpMethod:@"GET"
-//                           params:@{@"access_token":appDelegate.wbToken,
-//                                    @"count":@"50",
-//                                    @"page":@"1"}
-//                            queue:[NSOperationQueue mainQueue]
-//            withCompletionHandler:^(WBHttpRequest *httpRequest, id result, NSError *error) {
-//                if(!error){
-//                    if([result isKindOfClass:[NSDictionary class]] && [result objectForKey:@"statuses"] != nil){
-//                        NSArray *statuses = (NSArray*)[result objectForKey:@"statuses"];
-//                        for(NSDictionary *dic in statuses){
-//                            StatusModel *status = [[StatusModel alloc] init];
-//                            [status reflectDataFromOtherObject:dic];
-//                            [self.statusesInfo addObject:status];
-//                        }
-//                    }
-//                    NSLog(@"%@", self.statusesInfo);
-//                    [self.tableView reloadData];
-//                }else{
-//                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[NSString stringWithFormat:@"%ld:%@ - %@", error.code, error.domain, error.userInfo] preferredStyle:UIAlertControllerStyleAlert];
-//                    UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
-//                    [alert addAction:alertAction];
-//                    [self presentViewController:alert animated:YES completion:nil];
-//                }
-//            }];
+    
+    //self.footerView.backgroundColor = [UIColor yellowColor];
+    //self.headerView.backgroundColor = [UIColor yellowColor];
+    self.scrollerView = self.tableView;
+    self.headerView.hidden = YES;
+    self.footerView.hidden = YES;
+    //self.tableView.scrollsToTop = YES;
+    [self.scrollerView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    
+    //requestForLocalData = YES;
+
+    [self.tableView reloadData];
 }
 
 -(void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"RespondToCellButton" object:nil];
+    [self.tableView removeObserver:self forKeyPath:@"contentOffSet" context:nil];
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    //NSLog(@"%f", self.tableView.contentOffset.y);
 }
 
 -(void)respondToCellButtonClicked:(NSNotification *)noti
@@ -106,17 +125,21 @@
     }else if([info objectForKey:ImageViewClicked]){
         
     }else if([info objectForKey:UserAvatorClicked]){
-        
+        NSLog(@"头像");
     }else if([info objectForKey:PageViewClicked]){
-        
+        NSLog(@"链接");
     }else if([info objectForKey:MovieViewClicked]){
-        
+        NSLog(@"电影链接");
     }
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    AppDelegate *appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    if(appDelegate.screen_name){
+        self.navigationItem.title = appDelegate.screen_name;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -128,18 +151,20 @@
 {
     if(!_weiboInfo){
         //test data
-        for(int i = 7; i < 8; ++i){
-            NSString *string = [NSString stringWithFormat:@"weibo_%d", i];
-            NSError*error;
-            NSURL *url = [[NSBundle mainBundle] URLForResource:string withExtension:@".json"];
-            NSData *data = [NSData dataWithContentsOfURL:url];
-            NSMutableDictionary *mutalDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-            if(i == 7){
-                _weiboInfo = mutalDic;
-            }else{
-                NSMutableArray *mutalArray = [_weiboInfo objectForKey:Weibo_Status];
-                [mutalArray addObjectsFromArray:[mutalDic objectForKey:Weibo_Status]];
-                [_weiboInfo setValue:mutalArray forKey:Weibo_Status];
+        if(requestForLocalData){
+            for(int i = 7; i < 8; ++i){
+                NSString *string = [NSString stringWithFormat:@"weibo_%d", i];
+                NSError*error;
+                NSURL *url = [[NSBundle mainBundle] URLForResource:string withExtension:@".json"];
+                NSData *data = [NSData dataWithContentsOfURL:url];
+                NSMutableDictionary *mutalDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+                if(i == 7){
+                    _weiboInfo = mutalDic;
+                }else{
+                    NSMutableArray *mutalArray = [_weiboInfo objectForKey:Weibo_Status];
+                    [mutalArray addObjectsFromArray:[mutalDic objectForKey:Weibo_Status]];
+                    [_weiboInfo setValue:mutalArray forKey:Weibo_Status];
+                }
             }
         }
 //        NSString *jsonStr = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
@@ -153,13 +178,28 @@
     if(!_statusesInfo){
         _statusesInfo = [[NSMutableArray alloc] init];
         //test data
-        for(NSDictionary *dic in [self.weiboInfo objectForKey:Weibo_Status]){
-            StatusModel *status = [[StatusModel alloc] init];
-            [status reflectDataFromOtherObject:dic];
-            [_statusesInfo addObject:status];
+        if(requestForLocalData){
+            for(NSDictionary *dic in [self.weiboInfo objectForKey:Weibo_Status]){
+                StatusModel *status = [[StatusModel alloc] init];
+                [status reflectDataFromOtherObject:dic];
+                [_statusesInfo addObject:status];
+            }
         }
     }
     return _statusesInfo;
+}
+- (IBAction)requestTypeBtnClicked:(UIBarButtonItem *)sender {
+    requestForLocalData = !requestForLocalData;
+    sender.title = requestForLocalData ? @"本地" : @"网络";
+    if(!requestForLocalData){
+        [self.statusesInfo removeAllObjects];
+        [self sendRequestToWeibo:YES];
+        self.currentPage = 1;
+    }else{
+        self.statusesInfo = nil;
+        [self.tableView reloadData];
+    }
+    [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 #pragma mark - Table view data source
@@ -176,6 +216,7 @@
 {
     return CGFLOAT_MIN;
 }
+
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -204,12 +245,120 @@
     return cell;
 }
 
+-(void)sendRequestToWeibo:(BOOL) isPullRefresh
+{
+    if(!requestForLocalData){
+        if(isPullRefresh){
+            self.currentPage = 0;
+            [self.statusesInfo removeAllObjects];
+        }else{
+            ++self.currentPage;
+        }
+        //获取微博数据的借口，但是由于接口数据调整，拿不到一些图片、视频具体的链接，因此还是换成本地数据。
+        AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
+        NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"statuses/public_timeline.json"];
+        NSString *pageStr = [NSString stringWithFormat:@"%ld", self.currentPage];
+        [WBHttpRequest requestWithURL:urlStr
+                           httpMethod:@"GET"
+                               params:@{@"access_token":appDelegate.wbToken,
+                                        @"count":@"50",
+                                        @"page":pageStr}
+                                queue:[NSOperationQueue mainQueue]
+                withCompletionHandler:^(WBHttpRequest *httpRequest, id result, NSError *error) {
+                    if(!error){
+                        if([result isKindOfClass:[NSDictionary class]] && [result objectForKey:@"statuses"] != nil){
+                            NSArray *statuses = (NSArray*)[result objectForKey:@"statuses"];
+                            for(NSDictionary *dic in statuses){
+                                StatusModel *status = [[StatusModel alloc] init];
+                                [status reflectDataFromOtherObject:dic];
+                                [self.statusesInfo addObject:status];
+                            }
+                        }
+                        NSLog(@"%@", self.statusesInfo);
+                        [self.tableView reloadData];
+                    }else{
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:[NSString stringWithFormat:@"%ld:%@ - %@", error.code, error.domain, error.userInfo] preferredStyle:UIAlertControllerStyleAlert];
+                        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+                        [alert addAction:alertAction];
+                        [self presentViewController:alert animated:YES completion:nil];
+                    }
+                    [self endLoadData:isPullRefresh];
+                }];
+    }else{
+        [self endLoadData:isPullRefresh];
+    }
+}
+
+-(void)endLoadData:(BOOL) isPullRefresh
+{
+    if(isPullRefresh){
+        [self.headerView stopAnimation];
+        self.tableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
+        [self.tableView setContentOffset:CGPointMake(0, -64) animated:NO];
+        self.headerView.hidden = YES;
+    }else{
+        [self.footerView stopAnimation];
+        //self.tableView.contentInset = UIEdgeInsetsZero;
+        [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - ScreenHeight) animated:YES];
+        self.footerView.hidden = YES;
+    }
+}
+
+-(void)startLoadData:(BOOL)isPullRefresh
+{
+    if(isPullRefresh){
+        [self.headerView startAnimation];
+        CGRect frame = self.headerView.frame;
+        frame.origin.y = - RefreshViewHeight;
+        self.headerView.frame = frame;
+        [self.tableView setContentOffset:CGPointMake(0, -64 -RefreshViewHeight) animated:NO];
+        self.tableView.contentInset = UIEdgeInsetsMake(-64 - RefreshViewHeight, 0, 0, 0);
+    }else{
+        [self.footerView startAnimation];
+        //CGRect frame = self.footerView.frame;
+        //frame.origin.y = -64 - RefreshViewHeight;
+        //self.footerView.frame = frame;
+        //self.tableView.contentInset = UIEdgeInsetsMake(0, 0, self.footerView.frame.origin.y, 0);
+        [self.tableView setContentOffset: CGPointMake(0, self.tableView.contentSize.height -  ScreenHeight) animated:NO];
+    }
+    [self sendRequestToWeibo: isPullRefresh];
+}
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     if (self.fpsLabel.alpha == 0) {
         [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             self.fpsLabel.alpha = 1;
         } completion:NULL];
+    }
+}
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if(self.tableView.contentOffset.y < -64 - RefreshViewHeight){
+        //self.footerView.hidden = NO;
+        NSLog(@"刷新数据");
+        if(self.tableView.isDragging){
+            //CGRect frame = self.headerView.frame;
+            //frame.origin.y = self.tableView.contentOffset.y + RefreshViewHeight;
+            //self.headerView.frame = frame;
+        }
+        self.headerView.hidden = NO;
+        if(!self.tableView.isDragging){
+            [self startLoadData:YES];
+        }
+    }
+    if (self.tableView.contentOffset.y > self.tableView.contentSize.height - ScreenHeight + RefreshViewHeight) {
+        //self.headerView.hidden = NO;
+        NSLog(@"加载数据");
+        self.footerView.hidden = NO;
+        if(self.tableView.isDragging){
+            //CGRect frame = self.footerView.frame;
+            //frame.origin.y = self.tableView.contentOffset.y - RefreshViewHeight;
+            //self.footerView.frame = frame;
+        }
+        if(!self.tableView.isDragging){
+            [self startLoadData:NO];
+        }
     }
 }
 
