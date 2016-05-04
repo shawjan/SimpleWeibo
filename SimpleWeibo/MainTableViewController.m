@@ -249,14 +249,13 @@
 {
     if(!requestForLocalData){
         if(isPullRefresh){
-            self.currentPage = 0;
-            [self.statusesInfo removeAllObjects];
+            self.currentPage = 1;
         }else{
             ++self.currentPage;
         }
         //获取微博数据的借口，但是由于接口数据调整，拿不到一些图片、视频具体的链接，因此还是换成本地数据。
         AppDelegate* appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-        NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"statuses/public_timeline.json"];
+        NSString *urlStr = [NSString stringWithFormat:@"%@%@", Weibo_PublicLink, @"statuses/friends_timeline.json"];
         NSString *pageStr = [NSString stringWithFormat:@"%ld", self.currentPage];
         [WBHttpRequest requestWithURL:urlStr
                            httpMethod:@"GET"
@@ -267,7 +266,18 @@
                 withCompletionHandler:^(WBHttpRequest *httpRequest, id result, NSError *error) {
                     if(!error){
                         if([result isKindOfClass:[NSDictionary class]] && [result objectForKey:@"statuses"] != nil){
+                            if(isPullRefresh){
+                                [self.statusesInfo removeAllObjects];
+                            }
                             NSArray *statuses = (NSArray*)[result objectForKey:@"statuses"];
+                            if(statuses.count <= 0){
+                                UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"" message:@"没有更多数据了~" preferredStyle:UIAlertControllerStyleAlert];
+                                UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
+                                [alert addAction:alertAction];
+                                [self presentViewController:alert animated:YES completion:nil];
+                                [self endLoadData:isPullRefresh];
+                                return ;
+                            }
                             for(NSDictionary *dic in statuses){
                                 StatusModel *status = [[StatusModel alloc] init];
                                 [status reflectDataFromOtherObject:dic];
